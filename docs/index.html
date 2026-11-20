@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bitácora · Semáforo de humedad PSoC 5LP</title>
+<meta name="description" content="Bitácora del curso Electrónica Análoga 3 (USCO 2026-B): cómo pasamos de una entrevista a una tarjeta SMD lista para fabricar, con los errores y las decisiones del camino.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F6F1;--ink:#1D2733;--soft:#1D2733B3;--line:#1D273322;--green:#2E7D57;--rust:#B5462B;--gold:#C98A00;--card:#FFFFFF}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#12171D;--ink:#E9E6DC;--soft:#E9E6DCB3;--line:#E9E6DC22;--green:#5FB98A;--rust:#E07A5F;--gold:#E8B54A;--card:#1A2129}}
+:root[data-theme="dark"]{--bg:#12171D;--ink:#E9E6DC;--soft:#E9E6DCB3;--line:#E9E6DC22;--green:#5FB98A;--rust:#E07A5F;--gold:#E8B54A;--card:#1A2129}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:17px;line-height:1.55}
+a{color:var(--green)}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+header.hero{padding:56px 0 30px}
+.kicker{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(32px,5vw,52px);line-height:1.05;margin:10px 0 16px}
+h2{font-family:'Space Grotesk',sans-serif;font-size:28px;line-height:1.15;margin:0 0 6px}
+.lede{font-size:19px;max-width:720px}
+.heroimg{width:100%;border-radius:16px;margin:24px 0 8px;background:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+.chip{border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:14px;background:var(--card)}
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:6px 20px;margin:12px 0 0;padding:0;list-style:none}
+nav.toc{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0}
+nav.toc .wrap{display:flex;gap:16px;overflow-x:auto;white-space:nowrap;font-size:15px}
+nav.toc a{text-decoration:none;color:var(--ink);opacity:.8}
+section.phase{padding:44px 0 10px}
+.phase-head{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.badge{font-family:'Space Grotesk',sans-serif;font-weight:700;background:var(--ink);color:var(--bg);border-radius:10px;padding:2px 10px;font-size:18px}
+.goal{color:var(--soft);margin:0 0 18px;max-width:760px}
+.tl{position:relative;margin-left:12px;padding-left:28px;border-left:3px dotted var(--line)}
+.entry{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 18px}
+.entry::before{content:"";position:absolute;left:-39px;top:20px;width:16px;height:16px;border-radius:50%;background:var(--ink);border:3px solid var(--bg)}
+.entry.err::before{background:var(--rust)} .entry.ok::before{background:var(--green)} .entry.idea::before{background:var(--gold)}
+.date{font-size:14px;color:var(--soft);font-weight:600}
+.entry h3{margin:2px 0 6px;font-size:19px;line-height:1.3}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:6px;padding:1px 7px;margin-right:6px;vertical-align:2px}
+.t-err{background:#B5462B22;color:var(--rust)} .t-ok{background:#2E7D5722;color:var(--green)} .t-idea{background:#C98A0022;color:var(--gold)} .t-prof{background:#1D273318;color:var(--ink)}
+.entry p{margin:6px 0}
+.entry figure{margin:12px 0 2px}
+.entry img{max-width:100%;border-radius:10px;display:block;background:#fff}
+.entry figcaption{font-size:14px;color:var(--soft);margin-top:6px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.quote{border-left:4px solid var(--gold);padding:4px 0 4px 14px;margin:10px 0;font-style:italic}
+.num{font-family:'Space Grotesk',sans-serif;font-weight:700}
+table{border-collapse:collapse;width:100%;font-size:15px;margin:8px 0}
+td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}
+.lessons{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:14px}
+.lessons div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.pending{border:2px dashed var(--gold);border-radius:14px;padding:14px 16px;background:transparent}
+footer{padding:40px 0 60px;color:var(--soft);font-size:15px}
+.btn{display:inline-block;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);text-decoration:none;color:var(--ink);margin:4px 6px 4px 0}
+@media (max-width:640px){.pair{grid-template-columns:1fr}.tl{margin-left:4px;padding-left:20px}.entry::before{left:-31px}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <div class="kicker">Bitácora del curso · Electrónica Análoga 3 · Universidad Surcolombiana · 2026-B</div>
+  <h1>Semáforo de humedad para PSoC 5LP</h1>
+  <p class="lede">Esta no es la versión pulida. Aquí está el camino: lo que probamos, lo que se nos dañó, lo que el profe nos corrigió y por qué la tarjeta terminó como terminó. Empezamos con una entrevista a un compañero y terminamos con una tarjeta SMD cotizada en JLCPCB por <span class="num">USD 19,75</span>.</p>
+  <img class="heroimg" src="img/render_p5.jpg" alt="Render 3D de la tarjeta de expansión SMD para la PSoC 5LP">
+  <div class="chips"><span class="chip">PSoC 5LP CY8CKIT-059</span><span class="chip">Procesamiento 100 % analógico</span><span class="chip">Sensor capacitivo v1.2</span><span class="chip">KiCad 10</span><span class="chip">CNC + JLCPCB</span></div>
+  <p><a class="btn" href="https://youtu.be/htcd85bEVA8">▶ Video del funcionamiento</a><a class="btn" href="https://github.com/Serrato5/semaforo-humedad-psoc5lp">Repositorio con el código y los archivos</a></p>
+  <strong>Equipo</strong>
+  <ul class="team"><li>Sebastián Serrato Ramírez</li><li>Juan Esteban Velásquez Perdomo</li><li>Keren Jireth Ramírez Rivera</li><li>Juan Diego Morales Parra</li><li>Juan Diego Valderrama Rodríguez</li></ul>
+  <p style="color:var(--soft);font-size:15px;margin-top:10px">Docente: Ing. Julián Adolfo Ramírez Gutiérrez</p>
+</div></header>
+
+<nav class="toc"><div class="wrap"><a href="#p1">P1 Exploración</a><a href="#p2">P2 Concepción</a><a href="#p3">P3 Propuesta</a><a href="#p4">P4 PMV</a><a href="#p5">P5 Industrial</a><a href="#p6">P6 Póster</a><a href="#aprendimos">Lo que aprendimos</a></div></nav>
+
+<main class="wrap">
+
+<section class="phase" id="p1">
+  <div class="phase-head"><span class="badge">P1</span><h2>Exploración analógica con la PSoC</h2></div>
+  <p class="goal">El reto: hacer funcionar una sola función analógica de la PSoC con el ciclo construir → medir → aprender.</p>
+  <div class="pending"><strong>En construcción.</strong> Aquí va el experimento del Proyecto 1, con lo que funcionó, lo que no y lo que aprendimos.</div>
+</section>
+
+<section class="phase" id="p2">
+  <div class="phase-head"><span class="badge">P2</span><h2>Concepción: ¿qué problema vale la pena resolver?</h2></div>
+  <p class="goal">Antes de diseñar había que salir a preguntar. Usamos la guía de <em>Customer Discovery</em> del curso.</p>
+  <div class="tl">
+    <div class="entry idea"><div class="date">Octubre</div><h3><span class="tag t-idea">Hallazgo</span>La entrevista E01 cambió el problema</h3>
+      <p>Hablamos con un compañero que clasifica muestras de suelo en las prácticas. Lo lento no era medir: era decidir la categoría con la tabla del docente.</p>
+      <div class="quote">«El valor quedaba casi en el borde entre dos rangos y tocaba volver a medir.»<br>«Cada práctica usa rangos distintos.»<br>«Algo que me diga la categoría de una vez, como un semáforo.»</div>
+      <p>De ahí salió la necesidad: clasificar al instante, con rangos que se puedan cambiar y sin arriesgar la PSoC, que es prestada.</p></div>
+    <div class="entry ok"><div class="date">Octubre</div><h3><span class="tag t-prof">Profe</span>Concepción aprobada</h3><p>El docente revisó la entrevista y la necesidad y nos dejó seguir con la propuesta.</p></div>
+  </div>
+</section>
+
+<section class="phase" id="p3">
+  <div class="phase-head"><span class="badge">P3</span><h2>Propuesta: comparar antes de escoger</h2></div>
+  <p class="goal">Cada decisión la tomamos frente a alternativas, no por costumbre.</p>
+  <div class="tl">
+    <div class="entry ok"><div class="date">27 oct</div><h3><span class="tag t-ok">Decisión</span>Sensor capacitivo, no resistivo</h3><p>El resistivo FC-28 es más barato, pero sus electrodos pasan corriente por el suelo y se corroen. El capacitivo v1.2 tiene las pistas aisladas.</p></div>
+    <div class="entry err"><div class="date">27 oct</div><h3><span class="tag t-err">Error</span>La primera versión usaba ADC… y el curso pedía analógico</h3><p>Hicimos el firmware v0 con el ADC y la decisión por software, porque era lo que sabíamos programar. Al releer la guía vimos que la clasificación tenía que ser analógica. La botamos el mismo día.</p></div>
+    <div class="entry ok"><div class="date">27–28 oct</div><h3><span class="tag t-ok">Decisión</span>Bloques analógicos internos de la PSoC</h3><p>Quedaron tres opciones: opamps y comparadores externos, bloques internos de la PSoC, o ADC con software. Ganó la segunda: un seguidor, dos comparadores y una NOR dentro del chip, con pocos componentes y pocos cables.</p>
+      <figure><img style="max-width:520px" src="img/v1_codigo.png" alt="Fragmento del firmware v1 con los umbrales fijos en VDAC"><figcaption>Firmware v1: los umbrales salían de dos VDAC fijos en el código.</figcaption></figure></div>
+    <div class="entry idea"><div class="date">29 oct</div><h3><span class="tag t-idea">Cambio</span>La entrevista nos obligó a cambiar algo que ya funcionaba</h3><p>Con VDAC, cambiar un rango era editar el código, compilar y grabar. El usuario no puede hacer eso en el laboratorio. Pasamos a dos potenciómetros en la tarjeta (firmware v2): los rangos se ajustan girando una perilla.</p></div>
+    <div class="entry"><div class="date">29 oct</div><h3>Primer póster (Proyecto 3)</h3><p>Narrativa contexto, evidencia, necesidad y propuesta, en 80 × 160 cm.</p></div>
+  </div>
+</section>
+
+<section class="phase" id="p4">
+  <div class="phase-head"><span class="badge">P4</span><h2>Del concepto al PMV: protoboard, fallas y CNC</h2></div>
+  <p class="goal">Aquí fue donde más nos equivocamos y donde más aprendimos.</p>
+  <div class="tl">
+    <div class="entry err"><div class="date">3 nov</div><h3><span class="tag t-err">Problema</span>No conseguimos los Schottky</h3><p>El diseño pedía 1N5819 para proteger la entrada. Solo había 1N4007, de silicio: con 12 V en el cable dejan pasar ≈ 5,6 V en vez de ≈ 5,2 V. Lo documentamos como limitación.</p></div>
+    <div class="entry"><div class="date">3 nov</div><h3>Montaje en protoboard en tres pasos</h3><p>Alimentación y protección, luego umbrales, luego LED. El primer plano, con marcadores numerados, confundió al grupo; lo rehicimos en tres dibujos simples.</p>
+      <div class="pair"><figure><img src="img/protoboard.jpg" alt="Montaje en protoboard con dos potenciómetros y tres LED"><figcaption>Montaje con los dos trimmers de umbral.</figcaption></figure><figure><img src="img/prueba_sensor.jpg" alt="Prueba con el sensor capacitivo y el multímetro"><figcaption>Prueba con el sensor y el multímetro.</figcaption></figure></div></div>
+    <div class="entry err"><div class="date">3 nov</div><h3><span class="tag t-err">Error</span>Calibramos en el nodo equivocado</h3><p>Medimos seco 2,51 V y húmedo 1,95 V… pero en P3[0], antes del seguidor. Los LED no coincidían con los umbrales: había 0,17 V de diferencia. Desde entonces se mide siempre en Vbuf (P3[1]), que es lo que ven los comparadores.</p>
+      <figure><img src="img/calibracion_inicial_hoja.jpg" alt="Hoja de cálculo de la primera calibración" style="max-height:320px;object-fit:cover;width:100%"><figcaption>La hoja de la primera calibración, la que estaba mal.</figcaption></figure></div>
+    <div class="entry err"><div class="date">3 nov · 19:04</div><h3><span class="tag t-err">Falla</span>Los LED no seguían la humedad</h3><p>Con el sensor al aire prendía el verde. Cambiamos cables y LED y solo cambió el síntoma. Entonces medimos todos los pines: el cableado estaba bien. El error estaba en el esquemático de PSoC Creator: un cable «tocaba» la salida del opamp en el dibujo, pero no estaba unido. Las entradas de los comparadores quedaron flotantes (red Net_52).</p>
+      <figure><img src="img/topdesign_corregido.jpg" alt="Esquemático corregido en PSoC Creator"><figcaption>Le dimos el mismo nombre de red a los dos cables (Vbuf_red), compilamos y grabamos a las 19:08.</figcaption></figure></div>
+    <div class="entry idea"><div class="date">3 nov</div><h3><span class="tag t-idea">Hallazgo</span>El multímetro también es parte del circuito</h3><p>Al medir la salida del sensor en seco, la lectura bajaba de 2,68 V a 2,50 V y el LED pasaba de rojo a amarillo. Es el efecto de carga: la salida del sensor tiene cerca de 1 MΩ. Eso justificó el seguidor.</p></div>
+    <div class="entry ok"><div class="date">3 nov · 19:30</div><h3><span class="tag t-ok">Funciona</span>Seco → rojo, húmedo → verde</h3><table><tr><th>Muestra</th><th>Vbuf</th><th>LED</th></tr><tr><td>Suelo seco</td><td>2,68 V</td><td>Rojo</td></tr><tr><td>Suelo húmedo</td><td>2,09 V</td><td>Verde</td></tr></table><p>También probamos sin condensadores: funcionó igual en el banco.</p></div>
+    <div class="entry"><div class="date">4 nov</div><h3><span class="tag t-prof">Profe</span>Revisión del prototipo y umbrales recomendados</h3><p>Umbrales en 2,48 V y 2,29 V. Ese mismo día diseñamos la PCB: una cara, pistas de 1 mm para la fresa en V de 30°, y una simulación del fresado antes de cortar.</p>
+      <div class="pair"><figure><img src="img/pcb_layout.png" alt="Layout de la PCB de una cara"><figcaption>Layout de 64 × 51 mm.</figcaption></figure><figure><img src="img/pcb_sim_fresado.png" alt="Simulación del fresado a partir del G-code"><figcaption>Simulación del G-code: sin cortos ni abiertos.</figcaption></figure></div></div>
+    <div class="entry err"><div class="date">5 nov</div><h3><span class="tag t-err">Imprevisto</span>Placa con picadura y una sola broca</h3><p>La placa virgen venía con un defecto (por eso salió más barata) y solo conseguimos broca de 0,8 mm. La tarjeta cabía lejos del defecto, y los huecos de 1 mm se agrandaron a mano.</p></div>
+    <div class="entry"><div class="date">9 nov</div><h3>PCB fresada en la CNC del laboratorio</h3>
+      <div class="pair"><figure><img src="img/cnc.jpg" alt="CNC del laboratorio fresando la placa"><figcaption>CNC con Mach3.</figcaption></figure><figure><img src="img/pcb_montaje.jpg" alt="PCB ensamblada conectada a la PSoC"><figcaption>Primera tarjeta ensamblada.</figcaption></figure></div></div>
+    <div class="entry err"><div class="date">Después del montaje</div><h3><span class="tag t-err">Pendiente</span>La PCB no repitió lo de la protoboard</h3><p>La tarjeta fresada no se comportó como esperábamos. Entre el fresado casero, la perforación a mano y la soldadura hay muchas fuentes de error. Fue una de las razones para llevar el P5 a fabricación industrial.</p></div>
+    <div class="entry"><div class="date">12 nov</div><h3><span class="tag t-prof">Profe</span>Revisión del PMV</h3><ul><li>Documentar mejor las pruebas y explicar qué hace la PSoC.</li><li>Los trimmers son los que determinan la clasificación; los condensadores no.</li><li>Añadir un socket para enchufar la PSoC.</li></ul></div>
+  </div>
+</section>
+
+<section class="phase" id="p5">
+  <div class="phase-head"><span class="badge">P5</span><h2>Del PMV a la fabricación industrial</h2></div>
+  <p class="goal">Rediseñar para que la arme una fábrica (JLCPCB), con todo lo SMD ensamblado por ellos y un presupuesto de USD 20.</p>
+  <div class="tl">
+    <div class="entry ok"><div class="date">19 nov</div><h3><span class="tag t-ok">Decisión</span>Mismo circuito, otra forma de fabricarlo</h3><p>Resistencias y condensadores 0805, LED 0805, Schottky B5819W (ahora sí), trimmers SMD, dos capas con plano de tierra, serigrafía y puntos de prueba. ERC y DRC sin errores en KiCad 10.</p>
+      <figure><img src="img/pcb_top.png" alt="Capa superior de la PCB del P5"><figcaption>Capa superior de la versión industrial, 80 × 62 mm.</figcaption></figure></div>
+    <div class="entry err"><div class="date">19 nov</div><h3><span class="tag t-err">Choque</span>El ensamble económico no aparecía</h3><p>JLCPCB no dejaba escoger el ensamble económico con acabado OSP. Lo cambiamos a HASL.</p></div>
+    <div class="entry err"><div class="date">19 nov</div><h3><span class="tag t-err">Se pasó</span>USD 20,32: el socket completo nos sacó del presupuesto</h3><p>La cotización salió en USD 19,03, y los conectores de dos filas de 26 pines sumaban USD 1,29 más. Rediseñamos a un socket parcial: solo los 12 pines que usamos, en cuatro tiras cortas.</p></div>
+    <div class="entry ok"><div class="date">19 nov</div><h3><span class="tag t-ok">Cumple</span>USD 19,75 con todo</h3><p>JLCPCB reconoció la tarjeta de dos capas y las 9 referencias, todas con existencias. Solo el trimmer es pieza <em>Extended</em>.</p>
+      <figure><img src="img/jlc_cotizacion.jpg" alt="Desglose de la cotización en JLCPCB"><figcaption>Cotización de 2 tarjetas ensambladas (USD 19,03) + conectores (USD 0,72).</figcaption></figure></div>
+  </div>
+</section>
+
+<section class="phase" id="p6">
+  <div class="phase-head"><span class="badge">P6</span><h2>Contarlo en un póster</h2></div>
+  <p class="goal">El póster pasó por varias versiones. Cada una respondió a una crítica.</p>
+  <div class="tl">
+    <div class="entry err"><div class="date">Noviembre</div><h3><span class="tag t-err">Crítica del equipo</span>«Solo texto, sin fotos ni simulación»</h3><p>La primera versión parecía un informe resumido. Además, el proyecto ya no era «un sensor»: era una tarjeta para la PSoC. Lo rehicimos con fotos, simulación y diseño.</p></div>
+    <div class="entry"><div class="date">Noviembre</div><h3>Video editado, sin audio</h3><p>Editamos el video del funcionamiento y lo subimos a YouTube para el código QR.</p></div>
+    <div class="entry"><div class="date">19 nov</div><h3><span class="tag t-prof">Profe</span>Segunda revisión</h3><ul><li>No es orden cronológico ni cuadrícula: un lienzo.</li><li>Un solo tamaño para títulos y otro para texto; el texto de las imágenes estaba muy pequeño.</li><li>Faltaba el Proyecto 5 y el render de la placa; QR más grande y referencias.</li><li>La bitácora debe mostrar todo el recorrido, incluido lo que falló. <em>(Esta página.)</em></li></ul></div>
+    <div class="entry ok"><div class="date">19–20 nov</div><h3><span class="tag t-ok">Versión actual</span>Seis bloques, máximo 100 palabras cada uno</h3><p>Ajustamos el póster a la guía del P6 y cambiamos las imágenes que no le gustaron al equipo: un pantallazo del código en lugar de la foto a la pantalla, y fotos sin recuadro.</p>
+      <div class="pair"><figure><img src="img/poster_v3.jpg" alt="Versión anterior del póster"><figcaption>Antes: con imágenes, pero en cuadrícula.</figcaption></figure><figure><img src="img/poster_p6.jpg" alt="Versión actual del póster"><figcaption>Ahora: lienzo, render del P5 y cotización.</figcaption></figure></div></div>
+  </div>
+</section>
+
+<section class="phase" id="aprendimos">
+  <div class="phase-head"><h2>Lo que aprendimos</h2></div>
+  <div class="lessons">
+    <div><strong>El requisito manda.</strong> La versión con ADC funcionaba, pero no cumplía. Leer la guía antes de programar nos habría ahorrado un día.</div>
+    <div><strong>El usuario cambia el diseño.</strong> Una sola entrevista convirtió los umbrales fijos en perillas.</div>
+    <div><strong>Medir antes de cambiar piezas.</strong> Cambiar cables a ciegas no sirvió; la tabla de voltajes nos llevó al error real, en el esquemático.</div>
+    <div><strong>El instrumento carga el circuito.</strong> Desde el efecto de carga, todo se mide después del seguidor.</div>
+    <div><strong>Fabricar es otro diseño.</strong> Fresar a mano y cotizar en una fábrica exigen reglas, piezas y costos distintos.</div>
+    <div><strong>El costo es una restricción de diseño.</strong> USD 0,57 de conectores nos obligaron a rediseñar el socket.</div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <p>Electrónica Análoga 3 · Universidad Surcolombiana, Neiva · 2026-B. Todo el código, los archivos de KiCad, Gerber, BOM, CPL y los expedientes técnicos están en el <a href="https://github.com/Serrato5/semaforo-humedad-psoc5lp">repositorio</a>.</p>
+</div></footer>
+</body>
+</html>

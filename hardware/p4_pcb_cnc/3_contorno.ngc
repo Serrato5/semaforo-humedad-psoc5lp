@@ -1,0 +1,22 @@
+(3 - MARCA DEL CONTORNO (CORTAR DESPUES CON SEGUETA O CIZALLA))
+(Tarjeta de expansion - semaforo de humedad - PSoC 5LP)
+(Generado 2026-11-04 - placa 64 x 51 mm, cara de cobre hacia arriba)
+(Origen X0 Y0 = esquina inferior izquierda de la placa vista desde el cobre; Z0 = superficie del cobre)
+(Z -0.15 mm)
+G21 G90 G94 G17 G40 G49
+G0 Z2.000
+M3 S12500
+G4 P3
+G0 Z1.000
+G0 X64.0000 Y51.0000
+G1 Z-0.1500 F30
+G1 F90
+G1 X0.0000 Y51.0000
+G1 X0.0000 Y0.0000
+G1 X64.0000 Y0.0000
+G1 X64.0000 Y51.0000
+G0 Z1.000
+G0 Z2.000
+M5
+G0 X0 Y0
+M30

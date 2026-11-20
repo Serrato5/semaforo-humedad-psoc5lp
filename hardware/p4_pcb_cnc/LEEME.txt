@@ -1,0 +1,42 @@
+TARJETA DE EXPANSIÓN - SEMÁFORO DE HUMEDAD (PSoC 5LP)
+Placa de una cara, 64 x 51 mm, cobre por debajo, componentes de inserción por arriba.
+
+ARCHIVOS
+  1_aislamiento.ngc      G-code de las pistas (fresa en V 30°, 0,25 mm, 3 pasadas, Z -0,10, F90, S12500). ~34 min.
+  2_marcas_taladros.ngc  Marca el centro de los 53 huecos (Z -0,30) para perforar a mano.
+  3_contorno.ngc         Marca el borde de la placa (Z -0,15) para cortarla después con segueta.
+  tarjeta-B_Cu.gbr       Gerber del cobre inferior (vista desde arriba, como KiCad; en FlatCAM hay que espejarlo).
+  tarjeta-Edge_Cuts.gbr  Gerber del contorno.
+  tarjeta.drl            Taladros Excellon: 38 huecos de 0,8 mm y 15 de 1,0 mm (diodos y conectores).
+  tarjeta_humedad.kicad_pcb  Archivo de KiCad (abrir y pulsar B para rellenar el plano de GND).
+  plantilla_1a1_A4.pdf   Imprimir al 100 % para comprobar que las patas encajan antes de fresar.
+  vista_previa.png       Vista de componentes y de cobre.
+  simulacion_fresado.png Resultado simulado del G-code: sin cortos ni circuitos abiertos.
+
+CÓMO MONTAR LA PLACA EN LA CNC (Mach3)
+  1. Placa virgen de cobre (sirve 10 x 10 cm) con la cara de COBRE HACIA ARRIBA, bien plana y sujeta.
+  2. Cero X0 Y0: la esquina INFERIOR IZQUIERDA del área de 64 x 51 mm (dejar ~10 mm de margen al borde
+     de la placa virgen para las bridas). Ver la cruz roja en simulacion_fresado.png.
+  3. Cero Z: punta de la fresa tocando el cobre.
+  4. El G-code ya viene ESPEJADO para fresar por el lado del cobre. No espejarlo otra vez.
+  5. Si en el laboratorio corrigen la altura con mapa de alturas (archivo "_adjusted"), aplicarlo
+     a 1_aislamiento.ngc igual que a los demás grupos.
+  6. Hacer primero una pasada de prueba en una esquina sobrante: si no corta el cobre, bajar Z_CUT
+     a -0,12 o -0,15; si las pistas quedan muy delgadas, subirla a -0,08.
+  7. Orden: 1_aislamiento -> 2_marcas_taladros -> 3_contorno. Misma fresa para los tres.
+
+DESPUÉS DE FRESAR
+  - Revisar con multímetro (continuidad) que 5V y GND NO estén en corto.
+  - Perforar: 0,8 mm (resistencias, condensadores, LEDs, trimmers) y 1,0 mm (1N4007, J1, J2).
+  - Soldar de lo más bajo a lo más alto: resistencias, diodos, condensadores, trimmers, LEDs, conectores.
+  - Polaridades: C2 pata larga (+) hacia el lado marcado "+" (arriba); D1 y D2 con la banda
+    en el lado marcado "K"; LEDs con la pata larga (ánodo) en el pad marcado "A" (hacia las resistencias).
+
+CONEXIONES
+  J2 (a la PSoC con dupont), de arriba hacia abajo:
+    1 5V | 2 GND | 3 SENS->P3[0] | 4 U_SECO->P3[2] | 5 U_HUM->P3[3] | 6 LED rojo<-P2[3] | 7 amarillo<-P2[4] | 8 verde<-P2[5]
+  J1 (sensor), de arriba hacia abajo: AOUT | VCC | GND
+
+SUPUESTOS A CONFIRMAR
+  - Trimmers 3296W de 10 kΩ con patas en línea a 2,54 mm. Si compran otro modelo, cambia la huella.
+  - Electrolítico de 5 mm con patas a 2,5 mm; cerámicos a 5 mm (se pueden doblar las patas).
