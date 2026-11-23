@@ -32,6 +32,7 @@ Proyecto del curso **Electrónica Análoga 3**, Universidad Surcolombiana (Neiva
 
 ## Cómo evolucionó
 
+0. **Exploración (P1)**: generador de señales con WaveDAC8 (f = fs/N, error 0,4–2,2 %); de ahí salió la lección del efecto de carga del DAC que llevó al seguidor.
 1. **ADC y software**: descartado, porque el curso exigía procesamiento analógico.
 2. **Bloques analógicos con umbrales fijos en VDAC (firmware v1)**: había que reprogramar para cambiar un rango.
 3. **Trimmers en la tarjeta (firmware v2)**: los rangos se ajustan sin computador, como pidió el usuario entrevistado.
@@ -52,7 +53,7 @@ hardware/
     scripts/              generación del esquemático y la PCB, autorruteo y archivos de fabricación
     esquematico_P5.pdf
 simulacion/               simulación en Python del semáforo y de la protección de entrada
-documentos/               expedientes técnicos del P4 y del P5, y el póster (80 × 160 cm)
+documentos/               informe del P1 (WaveDAC8), expedientes técnicos del P4 y del P5, y el póster (80 × 160 cm)
 docs/                     bitácora publicada con GitHub Pages
 ```
 

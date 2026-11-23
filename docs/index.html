@@ -75,8 +75,16 @@ footer{padding:40px 0 60px;color:var(--soft);font-size:15px}
 
 <section class="phase" id="p1">
   <div class="phase-head"><span class="badge">P1</span><h2>Exploración analógica con la PSoC</h2></div>
-  <p class="goal">El reto: hacer funcionar una sola función analógica de la PSoC con el ciclo construir → medir → aprender.</p>
-  <div class="pending"><strong>En construcción.</strong> Aquí va el experimento del Proyecto 1, con lo que funcionó, lo que no y lo que aprendimos.</div>
+  <p class="goal">El reto: hacer funcionar una sola función analógica de la PSoC con el ciclo construir → medir → aprender, y escribir un capítulo del documento colaborativo del curso.</p>
+  <div class="tl">
+    <div class="entry"><div class="date">Septiembre</div><h3>Nos tocó el experimento 7: generar y medir una señal analógica</h3><p>Usamos el WaveDAC8 de la PSoC para sacar una onda seno de 1 kHz: un reloj de 1 MHz recorre 1000 muestras guardadas en memoria y un DAC de 8 bits las convierte en voltaje. La pregunta era cómo cambian la frecuencia y la forma de la onda con la frecuencia de muestreo, el número de muestras, la resolución del DAC y la carga.</p></div>
+    <div class="entry err"><div class="date">Septiembre</div><h3><span class="tag t-err">Error</span>El proyecto no compilaba: «mismatching types»</h3><p>Conectamos la salida del WaveDAC8 a un pin configurado como digital. PSoC Creator no deja unir una señal analógica con un pin digital y el ajuste se detuvo con 2 errores. Hubo que cambiar el pin de salida a analógico.</p>
+      <figure><img src="img/p1_error_wavedac.png" alt="PSoC Creator con el WaveDAC8 y los errores de compilación"><figcaption>Pantallazo real: el WaveDAC8, el reloj y los dos errores de la lista de avisos.</figcaption></figure></div>
+    <div class="entry ok"><div class="date">Septiembre</div><h3><span class="tag t-ok">Medido</span>f = fs / N se cumple</h3><p>Medimos 992 Hz para 1 kHz configurado (0,8 % de error). Cambiando fs de 100 kHz a 1 MHz y N de 100 a 2000, el error se quedó entre 0,4 % y 2,2 %. Más muestras por periodo dan una onda más suave, pero más lenta.</p></div>
+    <div class="entry idea"><div class="date">Septiembre</div><h3><span class="tag t-idea">Hallazgo</span>El DAC no es ideal y no aguanta carga</h3><p>Los niveles medidos quedaron entre 8 y 38 mV por debajo de los teóricos (paso ideal ≈ 4 mV). El tiempo de establecimiento varió mucho entre transiciones (de menos de 1 µs a 12 µs). Y con una resistencia de carga la amplitud cae: con 4,7 kΩ, el modelo de divisor con la resistencia de salida del DAC predice una caída cercana al 47 %.</p></div>
+    <div class="entry err"><div class="date">Septiembre</div><h3><span class="tag t-err">Pendiente</span>Lo que nos quedó a medias</h3><p>La tabla de carga se llenó con valores calculados, no medidos, y el informe lo dice así. En la tabla de referencia quedaron cruzadas las etiquetas de frecuencia de muestreo y de salida. Lección: medir todo lo que se reporta y revisar las tablas antes de entregar.</p></div>
+    <div class="entry ok"><div class="date">Lo que nos llevamos</div><h3><span class="tag t-ok">Conexión</span>De aquí salió el seguidor del semáforo</h3><p>Ver cómo una salida de la PSoC se cae al conectarle carga nos preparó para el efecto de carga del sensor en el P4. La solución fue la misma idea: un seguidor de voltaje antes de medir o de decidir.</p></div>
+  </div>
 </section>
 
 <section class="phase" id="p2">
