@@ -6,7 +6,7 @@ Proyecto del curso **Electrónica Análoga 3**, Universidad Surcolombiana (Neiva
 
 ![Render 3D de la tarjeta SMD](docs/img/render_p5.jpg)
 
-**[Bitácora del proyecto](https://serrato5.github.io/semaforo-humedad-psoc5lp/)**: el recorrido completo, con los errores y las decisiones · **[Video del funcionamiento](https://youtu.be/htcd85bEVA8)**
+**[Guía de estudio (PDF)](documentos/Guia_de_estudio_del_proyecto.pdf)** · **[Bitácora del proyecto](https://serrato5.github.io/semaforo-humedad-psoc5lp/)**: el recorrido completo, con los errores y las decisiones · **[Video del funcionamiento](https://youtu.be/htcd85bEVA8)**
 
 ## Equipo
 
@@ -53,7 +53,7 @@ hardware/
     scripts/              generación del esquemático y la PCB, autorruteo y archivos de fabricación
     esquematico_P5.pdf
 simulacion/               simulación en Python del semáforo y de la protección de entrada
-documentos/               informe del P1 (WaveDAC8), expedientes técnicos del P4 y del P5, y el póster (80 × 160 cm)
+documentos/               guía de estudio, informe del P1 (WaveDAC8), expedientes técnicos del P4 y del P5, y el póster (80 × 160 cm)
 docs/                     bitácora publicada con GitHub Pages
 ```
 
@@ -76,4 +76,4 @@ ROW=20.32 FLIP=0 sh build.sh   # esquemático, ERC, PCB, autorruteo, planos de G
 sh fab.sh                      # Gerber, taladros, BOM y CPL para JLCPCB
 ```
 
-`ROW` es la distancia entre las filas J1 y J2 del kit. **El valor de 20,32 mm es una estimación hecha sobre una foto; hay que medirlo con calibrador antes de fabricar.**
+`ROW` es la distancia entre las filas J1 y J2 del kit. El valor de 20,32 mm (8 pasos de 2,54 mm) se verificó por fotogrametría: 51 agujeros detectados en una foto cenital del kit dan 8,0 ± 0,1 pasos entre filas. Conviene confirmarlo con calibrador antes de una compra real.
