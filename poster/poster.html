@@ -1,86 +1,71 @@
-<!DOCTYPE html>
-<html lang="es"><head><meta charset="utf-8">
-<style>
-:root{--bg:#F7F6F1;--navy:#1D2733;--green:#2E7D57;--rust:#B5462B;--amber:#D99A00;--muted:#1D2733B8;--line:#1D273326}
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><style>
 @page{size:3024px 6048px;margin:0}
+:root{--bg:#F7F6F1;--navy:#1D2733;--green:#2E7D57;--rust:#B5462B;--amber:#D99A00;--muted:#1D2733B8;--line:#1D273326}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:3024px;height:6048px;overflow:hidden;background:var(--bg);font-family:Inter,sans-serif;color:var(--navy);font-size:40px;line-height:1.3}
-.page{width:3024px;min-height:6048px;display:flex;flex-direction:column;padding:0 0 22px}
-header{background:var(--navy);color:#fff;padding:44px 110px 40px;display:flex;gap:70px;align-items:center}
-.tl{width:110px;height:300px;background:#11171f;border-radius:60px;display:flex;flex-direction:column;justify-content:space-around;align-items:center;padding:20px 0;flex:none}
-.tl i{width:80px;height:80px;border-radius:50%;display:block}
+.page{width:3024px;height:6048px;display:flex;flex-direction:column}
+header{background:var(--navy);color:#fff;padding:40px 110px 36px;display:flex;gap:64px;align-items:center}
+.tl{width:110px;height:300px;background:#11171f;border-radius:55px;display:flex;flex-direction:column;justify-content:space-around;align-items:center;flex:none}
+.tl i{width:74px;height:74px;border-radius:50%;display:block}
 h1{font-size:92px;line-height:1.05;font-weight:800;letter-spacing:-1px}
-.sub{font-size:46px;line-height:1.28;margin-top:16px;color:#fff;font-weight:500;max-width:2500px}
+.sub{font-size:46px;line-height:1.28;margin-top:16px;font-weight:500}
 .meta{font-size:32px;color:#ffffffc0;margin-top:16px;line-height:1.35}
-main{flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:30px 110px 0}
-.blk{position:relative}
-.bh{display:flex;align-items:center;gap:26px;margin-bottom:20px}
-.num{width:84px;height:84px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;font-size:54px;display:flex;align-items:center;justify-content:center;flex:none}
-h2{font-size:62px;font-weight:800;letter-spacing:-.5px}
-h2 small{font-size:40px;font-weight:600;color:var(--green);margin-left:18px}
-p{margin-bottom:16px}
-b{font-weight:700}
-.row{display:flex;gap:60px;align-items:flex-start}
-.card{background:#fff;border:2px solid var(--line);border-radius:22px;padding:30px 34px}
-table{border-collapse:collapse;width:100%;font-size:38px;line-height:1.25;background:#fff}
-th{background:var(--navy);color:#fff;text-align:left;padding:12px 18px;font-weight:700}
-td{padding:10px 18px;border-bottom:2px solid var(--line);vertical-align:top}
-tr:last-child td{border-bottom:none}
-.tg th{background:var(--green)}
+main{flex:1;position:relative;padding:36px 110px 0 110px;display:flex;flex-direction:column;justify-content:space-between}
+.rail{position:absolute;left:156px;top:80px;bottom:40px;width:8px;background:var(--green);opacity:.35;border-radius:4px}
+.blk{display:flex;gap:40px;position:relative}
+.num{width:100px;height:100px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;font-size:58px;display:flex;align-items:center;justify-content:center;flex:none;border:8px solid var(--bg);z-index:1}
+.card{flex:1;background:#fff;border:2px solid var(--line);border-radius:26px;padding:22px 40px 26px}
+.kick{font-size:32px;font-weight:700;color:var(--green);letter-spacing:1.5px;text-transform:uppercase}
+h2{font-size:60px;font-weight:800;letter-spacing:-.5px;line-height:1.1;margin:2px 0 10px}
+.lead{font-size:40px;margin-bottom:18px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.fig img{display:block;width:100%;border-radius:16px;border:2px solid var(--line)}
 .cap{font-size:32px;color:var(--muted);margin-top:12px;line-height:1.3}
 .cap b{color:var(--navy)}
-.prob{background:var(--rust);color:#fff;border-radius:22px;padding:26px 36px;font-size:42px;line-height:1.3;font-weight:600}
-.prob b{font-weight:800;display:block;font-size:40px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;opacity:.9}
-.quote{border-left:10px solid var(--green);padding:4px 0 4px 30px;font-style:italic;font-size:42px;margin:6px 0 10px}
-.quote span{display:block;font-style:normal;font-size:32px;color:var(--muted);margin-top:6px}
-.trans{display:flex;align-items:center;gap:20px;color:var(--green);font-weight:700;font-size:36px;margin:0 0 0 20px;height:42px}
-.trans svg{flex:none}
-.ok{color:var(--green);font-weight:800}
-.no{color:var(--rust);font-weight:800}
-.dot{display:inline-block;width:34px;height:34px;border-radius:50%;vertical-align:-5px;margin-right:12px}
-.chain{display:flex;align-items:stretch;gap:0}
-.st{flex:1;background:#fff;border:3px solid var(--navy);border-radius:22px;padding:20px 24px;font-size:35px;line-height:1.25}
-.st h3{font-size:42px;margin-bottom:8px}
-.st.hl{border-color:var(--green);background:#2E7D5710}
-.ar{width:70px;flex:none;display:flex;align-items:center;justify-content:center}
-.ph{position:relative;border-radius:18px;overflow:hidden;border:2px solid var(--line)}
-.ph img{display:block;width:100%}
-.pin{position:absolute;width:62px;height:62px;margin:-31px 0 0 -31px;font-size:38px;border-radius:50%;background:var(--rust);color:#fff;font-weight:800;font-size:44px;display:flex;align-items:center;justify-content:center;border:5px solid #fff;box-shadow:0 4px 14px #0006}
-.leg{font-size:36px;line-height:1.5}
-.leg i{display:inline-flex;width:52px;height:52px;border-radius:50%;background:var(--rust);color:#fff;font-style:normal;font-weight:800;align-items:center;justify-content:center;margin-right:14px;font-size:32px;vertical-align:middle}
-.bar{display:flex;height:96px;position:relative;background:#fff;border-radius:14px}
-.bar div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:30px;font-weight:700;border-right:2px solid #fff;text-align:center;line-height:1.1}
-.lim{position:absolute;top:-20px;bottom:-20px;border-left:8px dashed var(--rust)}
+table{border-collapse:collapse;width:100%;font-size:36px;line-height:1.22}
+th{background:var(--navy);color:#fff;text-align:left;padding:12px 18px;font-weight:700}
+td{padding:8px 18px;border-bottom:2px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.tg th{background:var(--green)}
+.ok{color:var(--green);font-weight:800}.no{color:var(--rust);font-weight:800}
+.dot{display:inline-block;width:32px;height:32px;border-radius:50%;vertical-align:-4px;margin-right:12px}
+.prob{background:var(--rust);color:#fff;border-radius:20px;padding:20px 30px;font-size:40px;line-height:1.28;font-weight:600;margin-bottom:22px}
+.prob b{display:block;font-size:32px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;opacity:.9}
+.quote{border-left:10px solid var(--green);padding:2px 0 2px 28px;font-style:italic;font-size:40px;margin-top:22px}
+.quote span{display:block;font-style:normal;font-size:30px;color:var(--muted);margin-top:4px}
+.chain{display:flex;align-items:stretch;margin-bottom:28px}
+.st{flex:1;border:3px solid var(--navy);border-radius:18px;padding:16px 20px;font-size:33px;line-height:1.22}
+.st h3{font-size:38px;margin-bottom:4px}
+.st.hl{border-color:var(--green);background:#2E7D5712}
+.ar{width:56px;flex:none;display:flex;align-items:center;justify-content:center}
+.ph{position:relative}
+.pin{position:absolute;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;background:var(--rust);color:#fff;font-weight:800;font-size:36px;display:flex;align-items:center;justify-content:center;border:5px solid #fff;box-shadow:0 4px 12px #0006}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.leg{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;font-size:31px;margin-top:12px}
+.leg i{display:inline-flex;width:44px;height:44px;border-radius:50%;background:var(--rust);color:#fff;font-style:normal;font-weight:800;align-items:center;justify-content:center;margin-right:10px;font-size:28px;vertical-align:middle}
+.note{margin-top:20px;border-left:10px solid var(--rust);padding:4px 0 4px 26px;font-size:36px}
+.bar{display:flex;height:84px;position:relative;margin-top:10px}
+.bar div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:700;border-right:3px solid #fff;text-align:center;line-height:1.05}
+.lim{position:absolute;top:-16px;bottom:-16px;border-left:7px dashed var(--rust)}
 ul.l{list-style:none}
-ul.l li{position:relative;padding-left:56px;margin-bottom:18px}
-ul.l li:before{content:"";position:absolute;left:6px;top:14px;width:26px;height:26px;border-radius:50%;background:var(--green)}
-footer{display:flex;gap:50px;padding:20px 110px 0;align-items:flex-start}
-.qr{background:var(--navy);border-radius:22px;padding:24px;display:flex;gap:24px}
-.qr div{width:190px;text-align:center;color:#fff;font-size:28px;line-height:1.25}
-.qr img{width:190px;height:190px;background:#fff;border-radius:10px;padding:10px;display:block;margin-bottom:10px}
-.refs{font-size:26px;line-height:1.24;color:var(--muted);column-count:2;column-gap:70px}
-.refs h4{font-size:32px;color:var(--navy);margin-bottom:4px}
+ul.l li{position:relative;padding-left:52px;margin-bottom:12px;font-size:39px}
+ul.l li:before{content:"";position:absolute;left:4px;top:13px;width:26px;height:26px;border-radius:50%;background:var(--green)}
+.qr{display:flex;gap:30px;justify-content:center}
+.qr div{width:250px;text-align:center;font-size:30px;line-height:1.25;font-weight:600}
+.qr img{width:250px;height:250px;display:block;margin-bottom:10px;border:2px solid var(--line);border-radius:12px;padding:12px}
+footer{padding:14px 110px 18px 250px;font-size:24px;line-height:1.25;color:var(--muted);column-count:2;column-gap:70px}
+footer h4{font-size:30px;color:var(--navy);column-span:all;margin-bottom:4px}
+footer div{break-inside:avoid}
 </style></head><body><div class="page">
-
-<header>
-  <div class="tl"><i style="background:#B5462B"></i><i style="background:#D99A00"></i><i style="background:#2E7D57"></i></div>
-  <div>
-    <h1>Semáforo de humedad del suelo con PSoC 5LP</h1>
-    <div class="sub">Una tarjeta que dice al instante si una muestra de suelo está <b>seca, semihúmeda o húmeda</b> encendiendo un LED de color, con límites que se ajustan girando una perilla.</div>
-    <div class="meta">Sebastián Serrato Ramírez · Juan Esteban Velásquez Perdomo · Keren Jireth Ramírez Rivera · Juan Diego Morales Parra · Juan Diego Valderrama Rodríguez<br>Electrónica Análoga 3 (2026-B) · Ing. Julián Adolfo Ramírez Gutiérrez · Universidad Surcolombiana, Neiva</div>
-  </div>
-</header>
-
-<main>
-
-<!-- 1 PROBLEMA -->
-<section class="blk" id="b1">
-  <div class="bh"><div class="num">1</div><h2>El punto de partida: ¿cómo se clasifica hoy una muestra?</h2></div>
-  <div class="row">
-    <div style="width:1250px">
-      <p>En las prácticas de suelos, cada muestra se mide con un sensor y un multímetro, y luego se busca su rango en una tabla. Es lento, depende de leer bien la pantalla y los rangos cambian en cada práctica. El usuario lo pidió así [1]:</p>
-      <div class="quote">«Algo que me diga la categoría de una vez, como un semáforo.»<span>Entrevista al usuario, Proyecto 2</span></div>
-      <svg viewBox="0 0 1500 400" width="1220" height="325" style="margin-top:4px" font-family="Inter" aria-label="Proceso manual en cuatro pasos">
+<header><div class="tl"><i style="background:#B5462B"></i><i style="background:#D99A00"></i><i style="background:#2E7D57"></i></div>
+<div><h1>Semáforo de humedad del suelo con PSoC 5LP</h1>
+<div class="sub">Una tarjeta que dice al instante si una muestra de suelo está <b>seca, semihúmeda o húmeda</b> encendiendo un LED de color, con límites que se ajustan girando una perilla.</div>
+<div class="meta">Sebastián Serrato Ramírez · Juan Esteban Velásquez Perdomo · Keren Jireth Ramírez Rivera · Juan Diego Morales Parra · Juan Diego Valderrama Rodríguez<br>Electrónica Análoga 3 (2026-B) · Ing. Julián Adolfo Ramírez Gutiérrez · Universidad Surcolombiana, Neiva</div></div></header>
+<main><div class="rail"></div><section class="blk" id="b1"><div class="num">1</div><div class="card">
+<div class="kick">Contexto</div><h2>¿Cómo se clasifica hoy una muestra de suelo?</h2>
+<p class="lead">Cada muestra se mide con sensor y multímetro, y su rango se busca en una tabla: es lento y los rangos cambian en cada práctica.</p>
+<div class="g2">
+ <div class="fig"><svg viewBox="0 0 1500 400" width="100%" style="display:block" font-family="Inter" aria-label="Proceso manual en cuatro pasos">
         <defs><marker id="a" markerWidth="10" markerHeight="10" refX="6" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1D2733"/></marker></defs>
         <g fill="#fff" stroke="#1D2733" stroke-width="4"><rect x="2" y="2" width="300" height="300" rx="24"/><rect x="400" y="2" width="300" height="300" rx="24"/><rect x="798" y="2" width="300" height="300" rx="24"/><rect x="1196" y="2" width="300" height="300" rx="24" stroke="#B5462B"/></g>
         <!-- vaso -->
@@ -99,31 +84,21 @@ footer{display:flex;gap:50px;padding:20px 110px 0;align-items:flex-start}
         <g stroke="#1D2733" stroke-width="6" marker-end="url(#a)"><line x1="312" y1="152" x2="384" y2="152"/><line x1="710" y1="152" x2="782" y2="152"/><line x1="1108" y1="152" x2="1180" y2="152"/></g>
         <g font-size="32" font-weight="600" text-anchor="middle" fill="#1D2733"><text x="152" y="350">1. Sensor en la</text><text x="152" y="388">muestra</text><text x="550" y="350">2. Leer el voltaje</text><text x="550" y="388">en el multímetro</text><text x="948" y="350">3. Buscar en la</text><text x="948" y="388">tabla de la práctica</text><text x="1346" y="350" fill="#B5462B">4. Decidir el rango</text><text x="1346" y="388" fill="#B5462B">(lento y manual)</text></g>
       </svg>
-    </div>
-    <div style="flex:1">
-      <div class="prob"><b>El problema</b>¿Cómo clasificar una muestra de suelo al instante, con límites que cambian en cada práctica, procesando la señal solo de forma analógica y sin arriesgar la PSoC prestada?</div>
-      <table style="margin-top:22px">
-        <tr><th>Requisito</th><th>Valor mínimo aceptable</th></tr>
-        <tr><td>Estados</td><td>3: seco, semihúmedo y húmedo</td></tr>
-        <tr><td>Cambiar los límites</td><td>Sin computador ni reprogramar</td></tr>
-        <tr><td>Procesamiento</td><td>100 % analógico; la CPU solo informa</td></tr>
-        <tr><td>Proteger la PSoC</td><td>Resistir 12 V conectados por error</td></tr>
-        <tr><td>Conexión a la PSoC</td><td>Enchufar, nunca soldar (es prestada)</td></tr>
-        <tr><td>Costo de fabricación</td><td>≤ USD 20 por 2 tarjetas</td></tr>
-      </table>
-    </div>
-  </div>
-</section>
-
-<div class="trans"><svg width="50" height="56"><path d="M25 4 V44 M8 28 L25 50 L42 28" stroke="#2E7D57" stroke-width="8" fill="none" stroke-linecap="round"/></svg>Con el problema claro, elegimos cómo trabajar</div>
-
-<!-- 2 METODO -->
-<section class="blk" id="b2">
-  <div class="bh"><div class="num">2</div><h2>El método: construir, medir y aprender <small>diseño ágil</small></h2></div>
-  <div class="row">
-    <div style="width:900px">
-      <p>No diseñamos todo de una vez: construimos lo mínimo que se pudiera probar, lo medimos y, con lo aprendido, decidimos el siguiente paso. Cada proyecto del curso fue una vuelta del ciclo hasta el <b>producto mínimo viable (PMV)</b>.</p>
-      <svg viewBox="0 0 800 640" width="450" height="360" style="display:block;margin:0 auto" font-family="Inter" aria-label="Ciclo construir, medir, aprender">
+  <div class="quote">«Algo que me diga la categoría de una vez, como un semáforo.»<span>Usuario de las prácticas, entrevista del Proyecto 2 [1]</span></div></div>
+ <div>
+  <div class="prob"><b>El problema</b>¿Cómo clasificar una muestra al instante, con límites que cambian en cada práctica, procesando la señal solo de forma analógica y sin arriesgar la PSoC prestada?</div>
+  <table><tr><th>Requisito</th><th>Valor mínimo aceptable</th></tr>
+  <tr><td>Estados</td><td>3: seco, semihúmedo y húmedo</td></tr>
+  <tr><td>Cambiar los límites</td><td>Sin computador ni reprogramar</td></tr>
+  <tr><td>Procesamiento</td><td>100 % analógico; la CPU solo informa</td></tr>
+  <tr><td>Proteger la PSoC</td><td>Resistir 12 V conectados por error</td></tr>
+  <tr><td>Conexión a la PSoC</td><td>Enchufar, nunca soldar (es prestada)</td></tr>
+  <tr><td>Costo de fabricación</td><td>≤ USD 20 por 2 tarjetas</td></tr></table>
+ </div></div></div></section><section class="blk" id="b2"><div class="num">2</div><div class="card">
+<div class="kick">Método</div><h2>Diseño ágil: construir, medir y aprender</h2>
+<p class="lead">Construimos lo mínimo que se pudiera probar, lo medimos y lo aprendido decidió el paso siguiente, hasta el <b>producto mínimo viable (PMV)</b>.</p>
+<div class="g2" style="grid-template-columns:640px 1fr">
+ <div class="fig"><svg viewBox="0 0 800 640" width="560" height="448" style="display:block;margin:0 auto" font-family="Inter" aria-label="Ciclo construir, medir, aprender">
         <defs><marker id="b" markerWidth="10" markerHeight="10" refX="6" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2E7D57"/></marker></defs>
         <g fill="none" stroke="#2E7D57" stroke-width="12" marker-end="url(#b)">
           <path d="M490,120 A250,250 0 0 1 640,420"/><path d="M560,560 A250,250 0 0 1 240,560"/><path d="M160,420 A250,250 0 0 1 310,120"/></g>
@@ -131,143 +106,78 @@ footer{display:flex;gap:50px;padding:20px 110px 0;align-items:flex-start}
         <circle cx="640" cy="510" r="100" fill="#1D2733"/><text x="640" y="524" font-size="40" fill="#fff">Medir</text>
         <circle cx="160" cy="510" r="100" fill="#1D2733"/><text x="160" y="524" font-size="40" fill="#fff">Aprender</text>
         <text x="400" y="390" font-size="64" fill="#2E7D57">PMV</text><text x="400" y="432" font-size="30" font-weight="600" fill="#1D2733">5 iteraciones</text></g>
-      </svg>
-    </div>
-    <div style="flex:1">
-      <table class="tg">
-        <tr><th style="width:240px">Iteración</th><th>Construimos</th><th>Medimos</th><th>Aprendimos</th></tr>
-        <tr><td><b>P1</b> Explorar</td><td>Un generador de ondas con el DAC de la PSoC</td><td>Frecuencia con error de 0,4 a 2,2 %; con una carga la señal se cae</td><td>Una salida débil necesita un seguidor que la aísle</td></tr>
-        <tr><td><b>P2</b> Entender</td><td>Una entrevista al usuario de las prácticas</td><td>Cómo clasifica hoy y qué le cuesta</td><td>Necesita 3 estados y límites que cambie él mismo</td></tr>
-        <tr><td><b>P3</b> Proponer</td><td>Un semáforo con los límites fijos en el código</td><td>Funciona, pero cambiar un rango obliga a reprogramar</td><td>Los límites deben salir de perillas (trimmers)</td></tr>
-        <tr style="background:#2E7D5714"><td><b>P4</b> PMV</td><td>Tarjeta con trimmers, fresada en la CNC</td><td>Seco 2,68 V → rojo; húmedo 2,09 V → verde</td><td>Funciona, pero el montaje a mano no se puede repetir en serie</td></tr>
-        <tr><td><b>P5</b> Industrial</td><td>Tarjeta para fabricar y ensamblar en JLCPCB</td><td>0 errores en las reglas; costo USD 19,75</td><td>Producir en serie es otro diseño: el costo también manda</td></tr>
-      </table>
-    </div>
-  </div>
-</section>
-
-<div class="trans"><svg width="50" height="56"><path d="M25 4 V44 M8 28 L25 50 L42 28" stroke="#2E7D57" stroke-width="8" fill="none" stroke-linecap="round"/></svg>De esas vueltas salió esta idea de circuito</div>
-
-<!-- 3 IDEA -->
-<section class="blk" id="b3">
-  <div class="bh"><div class="num">3</div><h2>La idea: cómo decide la tarjeta</h2></div>
-  <div class="chain" style="margin:0 0 26px">
-    <div class="st"><h3>Sensor</h3>Seco ≈ 2,7&nbsp;V; húmedo ≈ 2,1&nbsp;V</div>
-    <div class="ar"><svg width="60" height="60"><path d="M6 30 H46 M30 12 L52 30 L30 48" stroke="#1D2733" stroke-width="8" fill="none"/></svg></div>
-    <div class="st"><h3>Protección</h3>Con 12 V en el cable, a la PSoC llegan solo 5,2 V</div>
-    <div class="ar"><svg width="60" height="60"><path d="M6 30 H46 M30 12 L52 30 L30 48" stroke="#1D2733" stroke-width="8" fill="none"/></svg></div>
-    <div class="st"><h3>Seguidor</h3>Copia la señal sin cargar al sensor</div>
-    <div class="ar"><svg width="60" height="60"><path d="M6 30 H46 M30 12 L52 30 L30 48" stroke="#1D2733" stroke-width="8" fill="none"/></svg></div>
-    <div class="st hl"><h3>Dos comparadores</h3>Límites de seco y de húmedo, fijados con dos perillas</div>
-    <div class="ar"><svg width="60" height="60"><path d="M6 30 H46 M30 12 L52 30 L30 48" stroke="#1D2733" stroke-width="8" fill="none"/></svg></div>
-    <div class="st"><h3>Semáforo</h3>Si no es seco ni húmedo, enciende el amarillo</div>
-  </div>
-  <div class="row">
-    <div style="width:1600px">
-      <p><b>Más seco = más voltaje.</b> La decisión es analógica, dentro de la PSoC; el procesador solo avisa al computador.</p>
-      <table style="margin-top:6px">
-        <tr><th>Voltaje del sensor</th><th>Estado</th><th>LED</th></tr>
-        <tr><td>Mayor que el límite de seco</td><td>Seco</td><td><span class="dot" style="background:#B5462B"></span>Rojo</td></tr>
-        <tr><td>Entre los dos límites</td><td>Semihúmedo</td><td><span class="dot" style="background:#D99A00"></span>Amarillo</td></tr>
-        <tr><td>Menor que el límite de húmedo</td><td>Húmedo</td><td><span class="dot" style="background:#2E7D57"></span>Verde</td></tr>
-      </table>
-      <p class="cap" style="margin-top:14px">Ejemplo: con límites de 2,5 V y 2,2 V, una muestra de 2,35 V enciende el amarillo.</p>
-    </div>
-    <div style="flex:1">
-      <div class="ph" style="background:#fff"><img src="img/sim_transitorio.png"></div>
-      <p class="cap"><b>Simulación:</b> al agregar agua el voltaje cruza los límites y el LED pasa de rojo a amarillo y a verde.</p>
-    </div>
-  </div>
-</section>
-
-<div class="trans"><svg width="50" height="56"><path d="M25 4 V44 M8 28 L25 50 L42 28" stroke="#2E7D57" stroke-width="8" fill="none" stroke-linecap="round"/></svg>La construimos como PMV para medirla con suelo real</div>
-
-<!-- 4 PMV -->
-<section class="blk" id="b4">
-  <div class="bh"><div class="num">4</div><h2>El PMV (Proyecto 4): construido y medido</h2></div>
-  <div class="row">
-    <div style="width:700px">
-      <div class="ph"><img src="img/cnc.jpg"></div>
-      <p class="cap"><b>Fabricación:</b> la CNC del laboratorio fresa el cobre y deja las pistas. Luego soldamos los componentes y probamos con suelo real.</p>
-    </div>
-    <div style="width:660px">
-      <div class="ph"><img src="img/pmv_crop.jpg">
-        <div class="pin" style="left:17%;top:22%">1</div><div class="pin" style="left:43%;top:50%">2</div><div class="pin" style="left:66%;top:63%">3</div><div class="pin" style="left:53%;top:87%">4</div><div class="pin" style="left:82%;top:86%">5</div></div>
-      <div class="leg" style="margin-top:8px;font-size:32px;line-height:1.4"><i>1</i>Sensor enterrado en la muestra<br><i>2</i>PSoC 5LP (decide y avisa al PC)<br><i>3</i>Perillas de los límites<br><i>4</i>LED del semáforo<br><i>5</i>Tarjeta fresada en la CNC</div>
-    </div>
-    <div style="flex:1">
-      <table>
-        <tr><th>Prueba</th><th>Resultado</th><th>¿Cumple?</th></tr>
-        <tr><td>Suelo seco</td><td>2,68 V → LED rojo</td><td class="ok">Sí</td></tr>
-        <tr><td>Suelo húmedo</td><td>2,09 V → LED verde</td><td class="ok">Sí</td></tr>
-        <tr><td>Medir el sensor sin seguidor</td><td>El multímetro bajó la señal de 2,68 a 2,50 V</td><td class="no">No → se agregó el seguidor</td></tr>
-        <tr><td>12 V en el cable (simulación)</td><td>Llegan 5,19 V con diodos Schottky; 5,64 V con 1N4007</td><td class="ok">Sí, con Schottky</td></tr>
-        <tr><td>Separación entre pistas</td><td>0,84 mm (mínimo 0,6 mm)</td><td class="ok">Sí</td></tr>
-      </table>
-      <div class="card" style="margin-top:22px;border-color:var(--rust);padding:22px 30px"><b style="color:var(--rust)">Lo que el PMV enseñó:</b> el circuito funciona, pero los cables se sueltan y soldar a mano no se repite en serie.</div>
-    </div>
-  </div>
-</section>
-
-<div class="trans"><svg width="50" height="56"><path d="M25 4 V44 M8 28 L25 50 L42 28" stroke="#2E7D57" stroke-width="8" fill="none" stroke-linecap="round"/></svg>Por eso la rediseñamos para fabricarla en serie</div>
-
-<!-- 5 P5 -->
-<section class="blk" id="b5">
-  <div class="bh"><div class="num">5</div><h2>Versión industrial (Proyecto 5): lista para fabricar</h2></div>
-  <div class="row">
-    <div style="width:900px">
-      <div class="ph" style="background:#fff"><img src="img/render_p5.jpg"></div>
-      <p class="cap"><b>Render 3D (80 × 62 mm):</b> la PSoC se enchufa en los conectores negros; la fábrica pone los componentes pequeños.</p>
-    </div>
-    <div style="flex:1">
-      <table>
-        <tr><th>Característica</th><th>P4 · PMV</th><th>P5 · Industrial</th></tr>
-        <tr><td>Quién la fabrica</td><td>Nosotros, en la CNC</td><td>JLCPCB (China)</td></tr>
-        <tr><td>Componentes</td><td>Grandes, soldados a mano</td><td>Pequeños (SMD), puestos por máquina</td></tr>
-        <tr><td>Capas de cobre</td><td>1</td><td>2, con plano de tierra contra el ruido</td></tr>
-        <tr><td>Conexión a la PSoC</td><td>Cables sueltos</td><td>Se enchufa en un socket, sin soldar</td></tr>
-        <tr><td>Revisión</td><td>A simple vista</td><td>Reglas eléctricas y de fábrica: 0 errores</td></tr>
-      </table>
-      <p style="margin:22px 0 14px"><b>Costo real cotizado para 2 tarjetas ensambladas: USD 19,75</b> (límite USD 20)</p>
-      <div class="bar">
-        <div style="width:19.05%;background:#1D2733">Placa<br>4,00</div>
-        <div style="width:39.24%;background:#2E7D57">Preparación de fábrica 8,24</div>
-        <div style="width:7.38%;background:#1D2733cc">Plantilla 1,55</div>
-        <div style="width:20.14%;background:#B5462B">Perillas y piezas 4,23</div>
-        <div style="width:4.81%;background:#1D2733aa"></div>
-        <div style="width:3.43%;background:#2E7D57aa"></div>
-        <div class="lim" style="left:95.24%"></div>
-      </div>
-      <p class="cap" style="margin-top:22px">Últimas franjas: montaje (1,01) y conectores (0,72); la línea roja es el límite. Con conectores completos de 2 × 26 pines costaba USD 20,32: dejamos solo los 12 pines que se usan.</p>
-    </div>
-  </div>
-</section>
-
-<div class="trans"><svg width="50" height="56"><path d="M25 4 V44 M8 28 L25 50 L42 28" stroke="#2E7D57" stroke-width="8" fill="none" stroke-linecap="round"/></svg>Al final del recorrido</div>
-
-<!-- 6 CONCLUSIONES -->
-<section class="blk" id="b6">
-  <div class="bh"><div class="num">6</div><h2>Conclusiones: lo que aprendimos</h2></div>
-  <div class="row">
-    <ul class="l" style="flex:1">
-      <li><b>Resolvimos el problema:</b> la tarjeta clasifica al instante y sin computador; suelo seco → rojo, húmedo → verde.</li>
-      <li><b>Escuchar al usuario cambió el diseño:</b> los límites fijos pasaron a perillas.</li>
-      <li><b>Medir evitó errores:</b> el efecto de carga (P1 y multímetro) llevó al seguidor.</li>
-    </ul>
-    <ul class="l" style="flex:1">
-      <li><b>Fabricar en serie es otro diseño:</b> el presupuesto obligó a rediseñar el conector de la PSoC.</li>
-      <li><b>Antes del pedido:</b> medir con calibrador la distancia entre filas de la PSoC (20,32 mm por fotos) y confirmar con la fábrica la orientación de los LED.</li>
-    </ul>
-    <div class="qr">
-    <div><img src="img/qr_video.svg">Video del funcionamiento</div>
-    <div><img src="img/qr_repo.svg">Código, planos y documentación completa</div>
-  </div>
-  </div>
-</section>
-
-</main>
-
-<footer>
-  <div class="refs"><h4 style="column-span:all">Referencias</h4><div style="break-inside:avoid">[1] Equipo del proyecto, «Entrevista E01: clasificación de muestras de suelo», Univ. Surcolombiana, Neiva, oct. 2026.</div><div style="break-inside:avoid">[2] A. S. Sedra, K. C. Smith, T. C. Carusone y V. Gaudet, <i>Microelectronic Circuits</i>, 8.ª ed. Nueva York, NY, EE. UU.: Oxford Univ. Press, 2020.</div><div style="break-inside:avoid">[3] Infineon Technologies, «PSoC 5LP: CY8C58LP family datasheet», doc. 001-84932.</div><div style="break-inside:avoid">[4] DFRobot, «Capacitive soil moisture sensor SKU:SEN0193». [En línea]. Disponible: wiki.dfrobot.com</div><div style="break-inside:avoid">[5] JLCPCB, «PCB assembly capabilities». [En línea]. Disponible: jlcpcb.com/capabilities</div></div>
-</footer>
+      </svg><p class="cap" style="text-align:center">Cada vuelta deja una lección que cambia la siguiente versión.</p></div>
+ <table class="tg"><tr><th style="width:230px">Iteración</th><th>Construimos</th><th>Medimos</th><th>Aprendimos</th></tr>
+ <tr><td><b>P1</b> Explorar</td><td>Un generador de ondas con el DAC de la PSoC</td><td>Con una carga, la señal se cae</td><td>Una salida débil necesita un seguidor</td></tr>
+ <tr><td><b>P2</b> Entender</td><td>Una entrevista al usuario</td><td>Cómo clasifica hoy y qué le cuesta</td><td>Quiere 3 estados y límites que cambie él</td></tr>
+ <tr><td><b>P3</b> Proponer</td><td>Semáforo con límites fijos en el código</td><td>Cambiar un rango obliga a reprogramar</td><td>Los límites deben salir de perillas</td></tr>
+ <tr style="background:#2E7D5714"><td><b>P4</b> PMV</td><td>Tarjeta con perillas, fresada en CNC</td><td>Seco 2,68 V → rojo; húmedo 2,09 V → verde</td><td>Funciona, pero no se puede producir en serie</td></tr>
+ <tr><td><b>P5</b> Industrial</td><td>Tarjeta para fabricar en JLCPCB</td><td>0 errores de diseño; USD 19,75</td><td>Fabricar en serie también es diseñar</td></tr></table>
+</div></div></section><section class="blk" id="b3"><div class="num">3</div><div class="card">
+<div class="kick">La idea</div><h2>Cómo decide la tarjeta</h2>
+<p class="lead"><b>Más seco = más voltaje.</b> La tarjeta lo compara con dos límites fijados con perillas; todo es analógico y la CPU solo avisa al PC.</p>
+<div class="chain">
+ <div class="st"><h3>1. Sensor</h3>Seco ≈ 2,7&nbsp;V; húmedo ≈ 2,1&nbsp;V</div><div class="ar"><svg width="44" height="44" viewBox="0 0 60 60"><path d="M6 30 H46 M30 12 L52 30 L30 48" stroke="#1D2733" stroke-width="8" fill="none"/></svg></div>
+ <div class="st"><h3>2. Protección</h3>Con 12 V en el cable, a la PSoC llegan 5,2 V</div><div class="ar"><svg width="44" height="44" viewBox="0 0 60 60"><path d="M6 30 H46 M30 12 L52 30 L30 48" stroke="#1D2733" stroke-width="8" fill="none"/></svg></div>
+ <div class="st"><h3>3. Seguidor</h3>Copia la señal sin cargar al sensor</div><div class="ar"><svg width="44" height="44" viewBox="0 0 60 60"><path d="M6 30 H46 M30 12 L52 30 L30 48" stroke="#1D2733" stroke-width="8" fill="none"/></svg></div>
+ <div class="st hl"><h3>4. Comparadores</h3>Contra los límites de las dos perillas</div><div class="ar"><svg width="44" height="44" viewBox="0 0 60 60"><path d="M6 30 H46 M30 12 L52 30 L30 48" stroke="#1D2733" stroke-width="8" fill="none"/></svg></div>
+ <div class="st"><h3>5. Semáforo</h3>Enciende un solo LED</div>
+</div>
+<div class="g2" style="grid-template-columns:1fr 940px">
+ <div class="fig" style="order:2"><img src="img/sim_transitorio.png"><p class="cap"><b>Simulación:</b> al agregar agua el voltaje cruza los límites y el LED pasa de rojo a amarillo y a verde.</p></div>
+ <div style="order:1"><table><tr><th>Voltaje del sensor</th><th>Estado</th><th>LED</th></tr>
+ <tr><td>Mayor que el límite de seco</td><td>Seco</td><td><span class="dot" style="background:#B5462B"></span>Rojo</td></tr>
+ <tr><td>Entre los dos límites</td><td>Semihúmedo</td><td><span class="dot" style="background:#D99A00"></span>Amarillo</td></tr>
+ <tr><td>Menor que el límite de húmedo</td><td>Húmedo</td><td><span class="dot" style="background:#2E7D57"></span>Verde</td></tr></table>
+ <p class="note">Ejemplo: con límites de 2,5 V y 2,2 V, una muestra de 2,35 V enciende el amarillo.</p><p class="note" style="border-color:var(--green)">La perilla mueve cada límite entre 1 y 4 V, así cada práctica usa sus propios rangos sin reprogramar.</p></div>
+</div></div></section><section class="blk" id="b4"><div class="num">4</div><div class="card">
+<div class="kick">Construir y medir</div><h2>El PMV (Proyecto 4) con suelo real</h2>
+<p class="lead">Fresamos la tarjeta en la CNC del laboratorio, soldamos los componentes y la probamos con muestras de suelo seco y húmedo.</p>
+<div class="g2">
+ <div class="fig"><div class="two">
+   <div><img src="img/cnc.jpg" style="height:450px;object-fit:cover"><p class="cap"><b>a.</b> Fabricación: la CNC del laboratorio fresa las pistas en la placa de cobre.</p></div>
+   <div><div class="ph"><img src="img/pmv_crop.jpg" style="height:450px;object-fit:cover"><div class="pin" style="left:17%;top:19%">1</div><div class="pin" style="left:43%;top:50%">2</div><div class="pin" style="left:68%;top:64%">3</div><div class="pin" style="left:50%;top:84%">4</div><div class="pin" style="left:82%;top:82%">5</div></div><p class="cap"><b>b.</b> El PMV midiendo una muestra:</p>
+   <div class="leg" style="grid-template-columns:1fr;margin-top:6px"><span><i>1</i>Sensor en la muestra</span><span><i>2</i>PSoC 5LP</span><span><i>3</i>Perillas de los límites</span><span><i>4</i>LED del semáforo</span><span><i>5</i>Tarjeta fresada</span></div></div></div></div>
+ <div><table><tr><th>Prueba</th><th>Resultado</th><th>¿Cumple?</th></tr>
+ <tr><td>Suelo seco</td><td>2,68 V → LED rojo</td><td class="ok">Sí</td></tr>
+ <tr><td>Suelo húmedo</td><td>2,09 V → LED verde</td><td class="ok">Sí</td></tr>
+ <tr><td>Medir el sensor sin seguidor</td><td>El multímetro bajó la señal de 2,68 a 2,50 V</td><td class="no">No: se agregó el seguidor</td></tr>
+ <tr><td>12 V en el cable (simulación)</td><td>5,19 V con Schottky; 5,64 V con 1N4007</td><td class="ok">Sí, con Schottky</td></tr>
+ <tr><td>Separación entre pistas</td><td>0,84 mm (mínimo 0,6 mm)</td><td class="ok">Sí</td></tr></table>
+ <p class="note"><b style="color:var(--rust)">Lo que aprendimos:</b> el circuito funciona, pero los cables se sueltan y soldar a mano no se repite en serie.</p></div>
+</div></div></section><section class="blk" id="b5"><div class="num">5</div><div class="card">
+<div class="kick">Versión industrial</div><h2>Proyecto 5: la tarjeta lista para fabricar</h2>
+<p class="lead">Rediseñamos la tarjeta para que una fábrica (JLCPCB) la produzca y la ensamble, con un socket donde la PSoC se enchufa sin soldarla.</p>
+<div class="g2" style="grid-template-columns:1fr 1.25fr">
+ <div class="fig"><img src="img/render_p5.jpg" style="height:440px;object-fit:cover"><p class="cap"><b>Render 3D (80 × 62 mm):</b> la PSoC se enchufa en los conectores negros; la fábrica pone los componentes pequeños.</p></div>
+ <div><table><tr><th>Característica</th><th>P4 · PMV</th><th>P5 · Industrial</th></tr>
+ <tr><td>Quién la fabrica</td><td>Nosotros, en la CNC</td><td>JLCPCB</td></tr>
+ <tr><td>Componentes</td><td>Grandes, a mano</td><td>Pequeños (SMD), por máquina</td></tr>
+ <tr><td>Capas de cobre</td><td>1</td><td>2, con plano de tierra</td></tr>
+ <tr><td>Conexión a la PSoC</td><td>Cables sueltos</td><td>Socket: se enchufa</td></tr>
+ <tr><td>Revisión del diseño</td><td>A simple vista</td><td>Reglas automáticas: 0 errores</td></tr></table>
+ </div>
+</div>
+<p style="margin-top:26px;font-size:38px"><b>Costo real cotizado para 2 tarjetas ensambladas: USD 19,75</b> (límite USD 20, línea roja)</p>
+<div class="bar">
+ <div style="width:19.05%;background:#1D2733">Placa 4,00</div>
+ <div style="width:39.24%;background:#2E7D57">Preparación de fábrica 8,24</div>
+ <div style="width:7.38%;background:#1D2733cc">Plantilla 1,55</div>
+ <div style="width:20.14%;background:#B5462B">Componentes 4,23</div>
+ <div style="width:4.81%;background:#1D2733aa">1,01</div>
+ <div style="width:3.43%;background:#2E7D57aa">0,72</div>
+ <div class="lim" style="left:95.24%"></div></div>
+<p class="cap">1,01 = montaje; 0,72 = conectores. Con conectores completos de 2 × 26 pines costaba USD 20,32: dejamos solo los 12 pines que se usan.</p></div></section><section class="blk" id="b6"><div class="num">6</div><div class="card">
+<div class="kick">Cierre</div><h2>Conclusiones</h2>
+<div class="g2" style="grid-template-columns:1fr 680px">
+ <ul class="l">
+  <li><b>Resolvimos el problema:</b> clasifica al instante y sin PC (seco → rojo, húmedo → verde).</li>
+  <li><b>Escuchar al usuario cambió el diseño:</b> los límites fijos pasaron a perillas.</li>
+  <li><b>Medir evitó errores:</b> el efecto de carga nos llevó al seguidor.</li>
+  <li><b>Fabricar en serie es otro diseño:</b> el presupuesto obligó a rediseñar el conector.</li>
+  <li><b>Antes del pedido:</b> confirmar con calibrador las filas de la PSoC (20,32 mm) y la orientación de los LED.</li>
+ </ul>
+ <div class="qr"><div><img src="img/qr_video.svg">Video</div><div><img src="img/qr_repo.svg">Documentación</div></div>
+</div></div></section></main>
+<footer><h4>Referencias</h4><div>[1] Equipo del proyecto, «Entrevista E01: clasificación de muestras de suelo», Univ. Surcolombiana, Neiva, oct. 2026.</div><div>[2] A. S. Sedra, K. C. Smith, T. C. Carusone y V. Gaudet, <i>Microelectronic Circuits</i>, 8.ª ed. Oxford Univ. Press, 2020.</div><div>[3] Infineon Technologies, «PSoC 5LP: CY8C58LP family datasheet», doc. 001-84932.</div><div>[4] DFRobot, «Capacitive soil moisture sensor SKU:SEN0193». Disponible: wiki.dfrobot.com</div><div>[5] JLCPCB, «PCB assembly capabilities». Disponible: jlcpcb.com/capabilities</div></footer>
 </div></body></html>
