@@ -6,7 +6,7 @@ Proyecto del curso **Electrónica Análoga 3**, Universidad Surcolombiana (Neiva
 
 ![Render 3D de la tarjeta SMD](docs/img/render_p5.jpg)
 
-**[Guía de estudio (PDF)](documentos/Guia_de_estudio_del_proyecto.pdf)** · **[Bitácora del proyecto](https://serrato5.github.io/semaforo-humedad-psoc5lp/)**: el recorrido completo, con los errores y las decisiones · **[Video del funcionamiento](https://youtu.be/htcd85bEVA8)**
+**[Guía de estudio (PDF)](documentos/Guia_de_estudio_del_proyecto.pdf)** · **[Bitácora del proyecto](https://serrato5.github.io/semaforo-humedad-psoc5lp/bitacora.html)** · **[Portafolio de Sebastián](https://serrato5.github.io/semaforo-humedad-psoc5lp/)**: el recorrido completo, con los errores y las decisiones · **[Video del funcionamiento](https://youtu.be/htcd85bEVA8)**
 
 ## Equipo
 
