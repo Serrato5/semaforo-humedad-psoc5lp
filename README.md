@@ -6,7 +6,7 @@ Proyecto del curso **Electrónica Análoga 3**, Universidad Surcolombiana (Neiva
 
 ![Render 3D de la tarjeta SMD](docs/img/render_p5.jpg)
 
-**[Guía de estudio (PDF)](documentos/Guia_de_estudio_del_proyecto.pdf)** · **[Bitácora del proyecto](https://serrato5.github.io/semaforo-humedad-psoc5lp/bitacora.html)**: el recorrido completo, con los errores y las decisiones · **[Portafolio de Sebastián](https://serrato5.github.io/semaforo-humedad-psoc5lp/)** · **[Video del funcionamiento](https://youtu.be/htcd85bEVA8)**
+**[Bitácora del equipo (PDF)](documentos/Bitacora_del_equipo_Grupo4.pdf)** · **[Guía de estudio (PDF)](documentos/Guia_de_estudio_del_proyecto.pdf)** · **[Bitácora del proyecto](https://serrato5.github.io/semaforo-humedad-psoc5lp/bitacora.html)**: el recorrido completo, con los errores y las decisiones · **[Portafolio de Sebastián](https://serrato5.github.io/semaforo-humedad-psoc5lp/)** · **[Video del funcionamiento](https://youtu.be/htcd85bEVA8)**
 
 ## Equipo
 
@@ -53,7 +53,7 @@ hardware/
     scripts/              generación del esquemático y la PCB, autorruteo y archivos de fabricación
     esquematico_P5.pdf
 simulacion/               simulación en Python del semáforo y de la protección de entrada
-documentos/               guía de estudio, informe del P1 (WaveDAC8), expedientes técnicos del P4 y del P5, y el póster (80 × 160 cm)
+documentos/               bitácora del equipo (PDF), guía de estudio, informe del P1 (WaveDAC8), expedientes técnicos del P4 y del P5, y el póster (80 × 160 cm)
 docs/                     bitácora publicada con GitHub Pages
 ```
 

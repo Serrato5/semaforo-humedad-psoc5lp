@@ -1,0 +1,464 @@
+% =====================================================================
+%  Bitácora del equipo · Electrónica Análoga 3 (2026-B)
+%  Del amplificador LM358 a la tarjeta industrial para PSoC 5LP
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+\newcommand{\fechaentrega}{26 de noviembre de 2026}
+\newcommand{\asignatura}{Electrónica Análoga 3 (2026-B)}
+\newcommand{\docente}{Ing.\ Julián Adolfo Ramírez Gutiérrez}
+\input{pre}
+\usepackage[most]{tcolorbox}
+\DeclareUnicodeCharacter{03A9}{\ensuremath{\Omega}}
+\DeclareUnicodeCharacter{00B5}{\ensuremath{\mu}}
+\newcommand{\etq}[2]{\colorbox{#1!15}{\textcolor{#1}{\scriptsize\bfseries #2}}}
+\newcommand{\terr}{\etq{nok}{ERROR}}
+\newcommand{\tdec}{\etq{usco}{DECISIÓN}}
+\newcommand{\tlog}{\etq{ok}{LOGRO}}
+\newcommand{\thal}{\etq{pend}{HALLAZGO}}
+\newcommand{\trev}{\etq{gris}{REVISIÓN}}
+
+\begin{document}
+\begin{titlepage}
+  \thispagestyle{empty}\centering
+  {\Large\bfseries UNIVERSIDAD SURCOLOMBIANA\par}\vspace{2pt}
+  {\large Facultad de Ingeniería\par}{\large Programa de Ingeniería Electrónica\par}
+  \vspace{1.5cm}{\color{usco}\rule{\linewidth}{1.2pt}\par}\vspace{0.5cm}
+  {\LARGE\bfseries Bitácora del equipo\\[6pt]Del amplificador LM358 a la tarjeta industrial:\\semáforo analógico de humedad del suelo con PSoC 5LP\par}
+  \vspace{0.4cm}
+  {\large\itshape Registro del proceso completo del curso: problemas, alternativas, decisiones, mediciones, fallas, correcciones y resultados\par}
+  \vspace{0.5cm}{\color{usco}\rule{\linewidth}{1.2pt}\par}
+  \vspace{1.3cm}
+  {\large\bfseries Integrantes (Grupo 4)\par}\vspace{0.3cm}
+  \begin{tabular}{ll}
+    Sebastián Serrato Ramírez        & 20241220023 \\
+    Juan Esteban Velásquez Perdomo   & 20241223094 \\
+    Keren Jireth Ramírez Rivera      & 20241221116 \\
+    Juan Diego Morales Parra         & 20242229337 \\
+    Juan Diego Valderrama Rodríguez  & 20242227307 \\
+  \end{tabular}
+  \vfill
+  {\large\bfseries Asignatura:} {\large \asignatura\par}\vspace{0.2cm}
+  {\large\bfseries Docente:} {\large \docente\par}\vspace{1.0cm}
+  {\large Neiva, Huila\par}{\large \fechaentrega\par}
+\end{titlepage}
+
+\begin{abstract}
+\noindent Esta bitácora reconstruye el recorrido del equipo durante el semestre, desde el primer reto de diseño (un amplificador de cuatro etapas con LM358) hasta una tarjeta de expansión para la PSoC 5LP lista para fabricación industrial. El hilo conductor es el ciclo construir--medir--aprender \cite{ries}: cada producto se construyó con lo mínimo necesario, se midió, y su resultado definió el cambio del siguiente. Se registran las alternativas evaluadas, las decisiones y su justificación técnica, las fallas reales (un pin digital en una salida analógica, una calibración en el nodo equivocado, una red flotante en el esquemático, un presupuesto excedido) y la forma en que se corrigieron. Las evidencias incluyen cálculos, simulaciones, capturas, fotografías y mediciones con osciloscopio y multímetro, con la comparación entre valores teóricos, simulados y experimentales. El producto final clasifica la humedad en tres estados con procesamiento 100~\% analógico: el suelo seco (\SI{2.68}{V}) enciende el LED rojo y el húmedo (\SI{2.09}{V}) el verde; su versión industrial pasó ERC y DRC sin errores y se cotizó en USD~19,75 para dos tarjetas ensambladas.
+\end{abstract}
+
+\noindent\textbf{Cómo leer esta bitácora.} La tabla~\ref{tab:rubrica} indica dónde se atiende cada criterio de evaluación. Las entradas fechadas usan etiquetas: \terr{} \tdec{} \tlog{} \thal{} \trev{}.
+
+\begin{table}[H]\centering\small
+\caption{Criterios de la bitácora y secciones donde se atienden.}\label{tab:rubrica}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{5.2cm}X}
+\toprule
+Criterio & Dónde está \\
+\midrule
+Registro del proceso de desarrollo & Línea de tiempo (sec.~\ref{sec:linea}) y fases 0 a 6 (secs.~\ref{sec:f0}--\ref{sec:f6}) \\
+Evidencias técnicas y experimentales & Tablas y figuras de cada fase; comparación consolidada (sec.~\ref{sec:comp}) \\
+Toma de decisiones e iteraciones de diseño & Matrices de alternativas en cada fase; registro de decisiones (sec.~\ref{sec:decisiones}) \\
+Trabajo en equipo y gestión de responsabilidades & Sección~\ref{sec:equipo} \\
+Análisis crítico, aprendizaje y comunicación & Sección~\ref{sec:critico} y conclusiones \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\tableofcontents
+\newpage
+
+% =====================================================================
+\section{Línea de tiempo del semestre}\label{sec:linea}
+% =====================================================================
+\begin{longtable}{>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{10.7cm}}
+\caption{Hitos del proceso, en orden cronológico.}\label{tab:linea}\\
+\toprule
+Fecha & Tipo & Qué pasó \\
+\midrule\endfirsthead
+\toprule Fecha & Tipo & Qué pasó \\ \midrule\endhead
+17--19 ago & \tdec & Fase 0: amplificador de ganancia 10 y ancho de banda de \SI{250}{kHz} con LM358. Se eligen cuatro etapas no inversoras y fuente dual de $\pm$\SI{15}{V}. \\
+19 ago & \thal & Con \SI{400}{mVp} de entrada el amplificador distorsiona desde \SI{50}{kHz}: el límite es el slew rate, no el GBW. \\
+Semana 1 PSoC & \tlog & Primer programa en la PSoC 5LP: LED en P2[1] con parpadeo de \SI{500}{ms}. \\
+Sep & \terr & WaveDAC8 no compila («mismatching types»): la salida analógica estaba unida a un pin digital. \\
+26 sep & \tlog & P1: $f=f_s/N$ verificada; \SI{992}{Hz} medidos para \SI{1}{kHz} (0,8~\%). El DAC pierde amplitud con carga. \\
+19 oct & \thal & P2: entrevista E01. El cuello de botella no es medir, sino decidir la categoría con la tabla. \\
+27 oct & \terr & Firmware v0 con ADC y decisión por software: no cumple el requisito analógico; se descarta el mismo día. \\
+27--28 oct & \tdec & P3: sensor capacitivo; seguidor, dos comparadores y NOR internos; umbrales en dos VDAC8 (v1). \\
+29 oct & \tdec & Los umbrales pasan de VDAC8 a dos trimmers (v2), por la entrevista: los rangos cambian entre prácticas. \\
+P4, Gate 1 & \trev & Se presenta la propuesta y avance con la protoboard funcionando, antes de fabricar la PCB. \\
+3 nov & \terr & Calibración medida en P3[0] en lugar de Vbuf: \SI{0.17}{V} de diferencia. Se repite en el nodo correcto. \\
+3 nov, 19:04 & \terr & Los LED no siguen la humedad. Cableado correcto: había una red flotante (Net\_52) en el esquemático. Corregida y grabada a las 19:08. \\
+3 nov, 19:30 & \tlog & Seco \SI{2.68}{V} $\rightarrow$ rojo; húmedo \SI{2.09}{V} $\rightarrow$ verde. El multímetro baja la lectura de \SI{2.68}{V} a \SI{2.50}{V}: efecto de carga. \\
+4 nov & \trev & El docente recomienda umbrales de \SI{2.48}{V} y \SI{2.29}{V}. \\
+4--9 nov & \tlog & PCB de una cara de \SI{64}{mm}~$\times$~\SI{51}{mm}; simulación del G-code y fresado en CNC. Una soldadura defectuosa se rehace. \\
+12 nov & \trev & El docente pide un socket para la PSoC, documentar mejor las pruebas y aclarar que los trimmers deciden la clasificación. \\
+17 nov & \trev & Primera revisión del póster: falta contexto, falta el P5, imágenes sin descripción. \\
+19 nov & \tdec & P5: rediseño SMD de dos capas para JLCPCB. El ensamble económico no admite OSP: se cambia a HASL. \\
+19 nov & \terr & Con el socket completo la cotización llega a USD~20,32 (límite USD~20). Se rediseña a socket parcial: USD~19,75. \\
+23 nov & \tlog & Distancia entre filas de la PSoC verificada por fotogrametría: \SI{20.32}{mm}. \\
+24--26 nov & \trev & Revisiones del póster con el docente: orden cronológico, tercera persona, evidencia y presupuesto del P5. \\
+\bottomrule
+\end{longtable}
+
+% =====================================================================
+\section{Fase 0 · Calentamiento: amplificador y generador con LM358}\label{sec:f0}
+% =====================================================================
+\textbf{Problema.} Diseñar un amplificador con LM358 de ganancia $A_v\approx10$ y ancho de banda de al menos \SI{250}{kHz}, con una fuente de hasta \SI{30}{V}.
+
+\textbf{Investigación inicial.} El parámetro que condiciona el diseño es el producto ganancia--ancho de banda del LM358, $GBW\approx\SI{1}{MHz}$ \cite{lm358}. Con una sola etapa de ganancia 10, $f_H\approx GBW/A_v=\SI{100}{kHz}$: una etapa no alcanza.
+
+\begin{table}[H]\centering\small
+\caption{Matriz de alternativas para el número de etapas (ganancia total 10 repartida por igual).}
+\begin{tabular}{lccc}
+\toprule
+Alternativa & Ganancia por etapa & BW teórico & Evaluación \\
+\midrule
+1 etapa & 10 & \SI{100}{kHz} & \nocumple \\
+2 etapas & 3,162 & $\approx$\SI{203}{kHz} & \nocumple \\
+3 etapas & 2,154 & $\approx$\SI{237}{kHz} & Se aproxima \\
+4 etapas & 1,778 & $\approx$\SI{244}{kHz} & Mejor alternativa \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\tdec{} Se eligieron \textbf{cuatro etapas no inversoras}: la configuración no inversora no invierte la fase y aprovecha mejor el ancho de banda; dos LM358 contienen los cuatro amplificadores. Con $R_i=\SI{10}{k\ohm}$ y $R_f=\SI{8.2}{k\ohm}$ (valor comercial), cada etapa da $A_v=1+8{,}2/10=1{,}82$ y el total es $1{,}82^4\approx10{,}97$. \tdec{} Fuente dual de $\pm$\SI{15}{V}, para manejar señales senoidales sin offset.
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.85\linewidth]{fig/b1_0.jpg}
+\caption{Amplificador de cuatro etapas no inversoras con LM358 (Multisim). Cada etapa: $R_i=\SI{10}{k\ohm}$, $R_f=\SI{8.2}{k\ohm}$; condensadores de \SI{100}{nF} solo como desacople.}
+\end{figure}
+
+\terr{} \textbf{Capacitores mal ubicados.} Al armar se pusieron condensadores de \SI{100}{nF} en nodos de la realimentación; no pertenecían a la red de ganancia. Se dejaron solo como desacople entre cada riel y GND. También se unificó la referencia: generador, fuente, circuito y osciloscopio al mismo GND.
+
+\thal{} \textbf{Resultado experimental: el límite es el slew rate.} Con \SI{400}{mVp} de entrada el amplificador distorsionó desde \SI{50}{kHz}, lejos de los \SI{250}{kHz} teóricos. El modelo de GBW es de pequeña señal. Con $SR\approx\SI{0.68}{V/\micro s}$, la salida máxima sin distorsión a \SI{250}{kHz} es
+\[
+V_{\max}=\frac{SR}{2\pi f}=\frac{0{,}68\times10^{6}}{2\pi(250\,000)}\approx\SI{0.43}{V_p}
+\quad\Rightarrow\quad V_{in,\max}=\frac{0{,}43}{10{,}97}\approx\SI{39}{mV_p}.
+\]
+
+\textbf{Generador de funciones con LM358.} Se corrigió una fórmula inicial que usaba una variable inexistente; con la del disparador de Schmitt, $f=\frac{R_1+R_2}{4CR_fR_1}=\SI{1}{kHz}$ (no \SI{250}{Hz} como se estimó al principio). Para mantener el 70~\% del rango dinámico (\SI{12.6}{V_{pp}}), el slew rate limita la onda triangular a $f_{\max}\le SR/(2V_{pp})\approx\SI{19.8}{kHz}$.
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.8\linewidth]{fig/b1_2.jpg}
+\caption{Simulación del amplificador: entrada y salida en fase, con la ganancia esperada.}
+\end{figure}
+
+\textbf{Primer acercamiento a la PSoC 5LP.} Se configuró un LED en P2[1] con parpadeo de \SI{500}{ms}. Quedó pendiente medir el período con instrumento.
+
+\begin{tcolorbox}[colback=filatabla,colframe=gris,title=Lección de la fase 0 que se usó después]
+Las limitaciones de gran señal pueden ser más restrictivas que las de pequeña señal, y un cálculo solo se confirma midiendo. Este criterio se aplicó en el P1 (carga del DAC) y en el P4 (carga del multímetro).
+\end{tcolorbox}
+
+% =====================================================================
+\section{Fase 1 · P1: exploración analógica con WaveDAC8}\label{sec:f1}
+% =====================================================================
+\textbf{Pregunta.} ¿Cómo influyen la frecuencia de muestreo $f_s$ y el número de muestras $N$ en la frecuencia de la señal generada, y cómo limitan el DAC y la carga el comportamiento de la salida?
+
+\textbf{Configuración.} WaveDAC8, seno de \SI{1.000}{V_{pp}} con offset de \SI{0.510}{V}, rango VDAC de 0 a \SI{1.020}{V} (paso $\approx$\SI{4}{mV}, 8 bits), reloj externo de \SI{1}{MHz} y $N=1000$. Teóricamente $f_{out}=f_s/N=\SI{1}{kHz}$.
+
+\begin{figure}[H]\centering
+\begin{minipage}{0.47\linewidth}\centering\includegraphics[width=\linewidth]{fig/p1_wavedac8.png}\\{\small (a) Configuración del WaveDAC8.}\end{minipage}\hfill
+\begin{minipage}{0.47\linewidth}\centering\includegraphics[width=\linewidth]{fig/p1_error_wavedac.png}\\{\small (b) Error «mismatching types».}\end{minipage}
+\caption{P1 en PSoC Creator. \terr{} La salida analógica se había unido a un pin digital; el proyecto compiló al configurar el pin como analógico.}
+\end{figure}
+
+\begin{table}[H]\centering\small
+\caption{Frecuencia de salida: teórica ($f_s/N$) frente a medida con osciloscopio.}
+\begin{tabular}{cccc|cccc}
+\toprule
+\multicolumn{4}{c|}{Variando $f_s$ ($N=1000$)} & \multicolumn{4}{c}{Variando $N$ ($f_s=\SI{1}{MHz}$)} \\
+$f_s$ & Teórica & Medida & Error & $N$ & Teórica & Medida & Error \\
+\midrule
+\SI{100}{kHz} & \SI{100}{Hz} & \SI{99.6}{Hz} & 0,4~\% & 100 & \SI{10}{kHz} & \SI{9.94}{kHz} & 0,6~\% \\
+\SI{200}{kHz} & \SI{200}{Hz} & \SI{198}{Hz} & 1,0~\% & 250 & \SI{4}{kHz} & \SI{3.97}{kHz} & 0,75~\% \\
+\SI{500}{kHz} & \SI{500}{Hz} & \SI{497}{Hz} & 0,6~\% & 500 & \SI{2}{kHz} & \SI{1.98}{kHz} & 1,0~\% \\
+\SI{750}{kHz} & \SI{750}{Hz} & \SI{746}{Hz} & 0,53~\% & 1000 & \SI{1}{kHz} & \SI{996}{Hz} & 0,4~\% \\
+\SI{1}{MHz} & \SI{1000}{Hz} & \SI{992}{Hz} & 0,8~\% & 1750 & \SI{571.4}{Hz} & \SI{559}{Hz} & 2,17~\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\thal{} \textbf{El DAC no es ideal.} Los tiempos de establecimiento medidos variaron entre \SI{988}{ns} y \SI{12.2}{\micro s} según la transición, y la salida pierde amplitud al conectarle una carga resistiva, porque el VDAC8 en modo voltaje tiene impedancia de salida alta \cite{psoc}.
+
+\textbf{Limitaciones reconocidas.} La tabla de carga se llenó con valores calculados, no medidos, y en la tabla de referencia quedaron cruzadas las etiquetas de $f_s$ y de frecuencia de salida. Ambas fallas se habrían detectado con una revisión cruzada antes de entregar.
+
+% =====================================================================
+\section{Fase 2 · P2: concepción del problema}\label{sec:f2}
+% =====================================================================
+Siguiendo la guía de \emph{Customer Discovery} del curso, el 19 de octubre el equipo entrevistó a un estudiante que clasifica muestras de suelo en las prácticas (entrevista E01) \cite{e01}.
+
+\begin{table}[H]\centering\small
+\caption{Hallazgos de la entrevista E01 y requisito que generó cada uno.}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+Hallazgo & Requisito derivado \\
+\midrule
+Lo lento no es medir el voltaje, sino pasar del número a la categoría con la tabla. & Clasificar en 3 estados de forma inmediata (semáforo). \\
+«El valor quedaba casi en el borde entre dos rangos y tocaba volver a medir.» & Indicación sin ambigüedad: un solo LED encendido. \\
+«Cada práctica usa rangos distintos.» & Umbrales ajustables por el usuario, sin reprogramar. \\
+Se cometen errores al copiar valores. & La decisión no debe depender de leer una pantalla. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+A estos requisitos se sumaron los del docente: procesamiento analógico, protección obligatoria de las entradas de la PSoC y aprobación del esquemático antes de fabricar. La PSoC es prestada y la usan varios grupos, así que no se puede soldar.
+
+% =====================================================================
+\section{Fase 3 · P3: propuesta y comparación de alternativas}\label{sec:f3}
+% =====================================================================
+\begin{table}[H]\centering\small
+\caption{Alternativas evaluadas en la propuesta y decisión tomada.}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+Decisión & Alternativas & Elección y justificación \\
+\midrule
+Sensor & Resistivo FC-28 o capacitivo v1.2 & \textbf{Capacitivo} \cite{dfrobot}: pistas aisladas, sin corrosión. El resistivo pasa corriente por el suelo y se degrada. \\
+Procesamiento & ADC + software; comparadores externos; bloques analógicos internos de la PSoC & \textbf{Bloques internos} \cite{psoc}: cumplen el requisito analógico con pocos componentes externos. El ADC se descartó tras probarlo (v0, 27 oct). \\
+Umbrales & VDAC8 en firmware; trimmers & \textbf{VDAC8} en v1; luego \textbf{trimmers} en v2 (29 oct), por la entrevista. \\
+Indicación & Pantalla; LED & \textbf{3 LED}: se reconocen de un vistazo, con bajo costo y pocas conexiones. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\terr{} \textbf{Firmware v0.} La primera versión usó el ADC y decidía por software, porque era lo que el equipo sabía programar. Funcionaba, pero no cumplía el requisito analógico y se descartó el mismo día.
+
+\tdec{} \textbf{Arquitectura v1 (28 oct).} El sensor entra por P3[0] a un opamp interno configurado como seguidor (Vbuf en P3[1]); dos comparadores lo contrastan con dos umbrales y una compuerta NOR activa el amarillo. Con la calibración de referencia de la guía (\SI{2900}{mV} en seco y \SI{1350}{mV} en saturado), los umbrales de 30~\% y 60~\% quedaban en \SI{2435}{mV} y \SI{1970}{mV} (códigos 152 y 123 del VDAC8, a \SI{16}{mV} por código).
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.72\linewidth]{fig/sim_transitorio.png}
+\caption{Simulación del semáforo: al bajar Vbuf (se agrega agua) la salida pasa de rojo a amarillo y a verde, sin dos LED encendidos a la vez.}
+\end{figure}
+
+% =====================================================================
+\section{Fase 4 · P4: producto mínimo viable}\label{sec:f4}
+% =====================================================================
+\subsection{De VDAC8 a trimmers (v2)}
+\tdec{} Cada cambio de rango con VDAC8 exige recompilar. En la v2 los umbrales salen de dos trimmers de \SI{10}{k\ohm} entre resistencias de \SI{3.3}{k\ohm}, conectados a P3[2] (seco) y P3[3] (húmedo). El rango de cada umbral queda limitado a
+\[
+V_{\min}=5\cdot\frac{3{,}3}{16{,}6}=\SI{0.99}{V},\qquad V_{\max}=5\cdot\frac{13{,}3}{16{,}6}=\SI{4.01}{V},
+\]
+lo que cubre las lecturas reales y evita los rieles de alimentación. La CPU solo arranca los bloques y reporta el estado por UART (\SI{115200}{baud}) cada \SI{0.5}{s}.
+
+\subsection{Protección de la entrada}
+\tdec{} Una resistencia de \SI{1}{k\ohm}, dos diodos de recorte hacia \SI{5}{V} y GND y un condensador de \SI{100}{nF} (filtro con $f_c=1/(2\pi RC)\approx\SI{1.6}{kHz}$). La simulación con \SI{12}{V} en el cable del sensor muestra que con 1N4007 llegan \SI{5.64}{V} al pin; con Schottky, \SI{5.19}{V}. En el PMV se usaron 1N4007 por disponibilidad; en el P5 se pasó a Schottky B5819W.
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.72\linewidth]{fig/sim_proteccion.png}
+\caption{Simulación de la protección: voltaje en el pin de la PSoC según el voltaje en el cable del sensor.}
+\end{figure}
+
+\subsection{Montaje en protoboard, fallas y calibración}
+\begin{figure}[H]\centering
+\begin{minipage}{0.32\linewidth}\centering\includegraphics[width=\linewidth,height=4.4cm,keepaspectratio]{fig/protoboard.jpg}\\{\small (a) Montaje con dos trimmers.}\end{minipage}\hfill
+\begin{minipage}{0.32\linewidth}\centering\includegraphics[width=\linewidth,height=4.4cm,keepaspectratio]{fig/prueba_sensor.jpg}\\{\small (b) Prueba con sensor y multímetro.}\end{minipage}\hfill
+\begin{minipage}{0.32\linewidth}\centering\includegraphics[width=\linewidth,height=4.4cm,keepaspectratio]{fig/calibracion_inicial_hoja.jpg}\\{\small (c) Hoja de calibración inicial.}\end{minipage}
+\caption{Validación en protoboard antes de fabricar la PCB.}
+\end{figure}
+
+\terr{} \textbf{Calibración en el nodo equivocado (3 nov).} Las primeras lecturas se tomaron en P3[0] y no en Vbuf (P3[1]); la diferencia fue de \SI{0.17}{V}. Se rehízo la calibración en Vbuf.
+
+\terr{} \textbf{Red flotante (3 nov, 19:04).} Los LED no seguían la humedad aunque el cableado estaba bien. Al medir pin por pin y revisar el esquemático apareció la red Net\_52 sin conectar a la entrada de un comparador. Se corrigió y se grabó a las 19:08.
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.55\linewidth]{fig/topdesign_corregido.jpg}
+\caption{Esquemático interno corregido en PSoC Creator (red Vbuf conectada) y grabación exitosa.}
+\end{figure}
+
+\tlog{} \textbf{Resultado (3 nov, 19:30).} Con los umbrales en \SI{2.53}{V} y \SI{2.41}{V}, el suelo seco dio \SI{2.68}{V} en Vbuf y encendió el rojo; el húmedo dio \SI{2.09}{V} y encendió el verde. El estado semihúmedo se observó durante la transición.
+
+\thal{} \textbf{Efecto de carga del instrumento.} Al medir la salida del sensor directamente, el multímetro bajó la lectura de \SI{2.68}{V} a \SI{2.50}{V}. Si el multímetro tiene $R_{in}\approx\SI{10}{M\ohm}$ (valor típico, supuesto), la resistencia de salida del sensor es $R_{out}=R_{in}(2{,}68/2{,}50-1)\approx\SI{0.72}{M\ohm}$. Este resultado confirma la necesidad del seguidor, igual que la carga del DAC en el P1.
+
+\subsection{PCB de una cara fresada en CNC}
+\tdec{} La propuesta original contemplaba transferencia térmica y ácido. Al conseguir acceso a la CNC 3018 del laboratorio (y el flujo FlatCAM/Mach3 publicado por el docente) se eligió el fresado por aislamiento: evita el cloruro férrico y es repetible. La tarjeta se diseñó de \SI{64}{mm}~$\times$~\SI{51}{mm}, con pistas de 1 a \SI{1.5}{mm}, separaciones de \SI{0.6}{mm} y fresa en V de \SI{30}{\degree}; la separación mínima resultante fue de \SI{0.84}{mm}.
+
+\begin{figure}[H]\centering
+\begin{minipage}{0.32\linewidth}\centering\includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{fig/pcb_sim_fresado.png}\\{\small (a) Simulación del G-code.}\end{minipage}\hfill
+\begin{minipage}{0.32\linewidth}\centering\includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{fig/cnc.jpg}\\{\small (b) Fresado en la CNC.}\end{minipage}\hfill
+\begin{minipage}{0.32\linewidth}\centering\includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{fig/pcb_montaje.jpg}\\{\small (c) PMV midiendo una muestra.}\end{minipage}
+\caption{Fabricación y prueba de la PCB del PMV.}
+\end{figure}
+
+\terr{} \textbf{La PCB no repitió la protoboard.} Una soldadura defectuosa tuvo que rehacerse, y la conexión a la PSoC con cables dupont resultó frágil. \trev{} El 12 de noviembre el docente pidió un socket para la PSoC, documentar mejor las pruebas y aclarar que los trimmers deciden la clasificación.
+
+% =====================================================================
+\section{Fase 5 · P5: del PMV a la tarjeta industrial}\label{sec:f5}
+% =====================================================================
+\begin{table}[H]\centering\small
+\caption{Qué cambió del PMV a la versión industrial y por qué.}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{3.6cm}X}
+\toprule
+Aspecto & P4 · PMV & P5 · Industrial & Motivo \\
+\midrule
+Fabricación & CNC del laboratorio & JLCPCB (PCBA) & Repetibilidad en serie \\
+Componentes & THT, soldados a mano & SMD 0805 / SOD-123 & Ensamble por máquina \\
+Capas & 1 & 2, con plano de GND & Menos ruido y retorno corto \\
+Conexión PSoC & Cables dupont & Socket parcial (12 pines) & Revisión del 12 nov \\
+Protección & 1N4007 & Schottky B5819W & \SI{5.19}{V} frente a \SI{5.64}{V} con 12 V \\
+Verificación & Visual & ERC, DRC y paridad en 0 & Reglas del fabricante \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\terr{} \textbf{Acabado OSP incompatible.} El ensamble económico de JLCPCB no admitía OSP; se cambió a HASL. \terr{} \textbf{Presupuesto excedido.} Con dos tiras hembra de 26 pines el pedido llegaba a USD~20,32. \tdec{} Se rediseñó a un socket parcial con los 12 pines que se usan (J1: 4--6 y 25--26; J2: 1--2 y 22--26).
+
+\begin{table}[H]\centering\small
+\caption{Cotización real en JLCPCB para 2 tarjetas ensambladas (Economic) \cite{jlc}.}
+\begin{tabular}{lr}
+\toprule
+Concepto & USD \\
+\midrule
+PCB de 2 capas (\SI{80}{mm}~$\times$~\SI{62}{mm}, HASL) & 4,00 \\
+Preparación del ensamble & 8,24 \\
+Esténcil & 1,55 \\
+Componentes & 1,14 \\
+Cargo por pieza extendida (trimmer TC33X) & 3,09 \\
+Ensamble SMT y nitrógeno & 1,01 \\
+Conectores THT (comprados aparte) & 0,72 \\
+\midrule
+\textbf{Total} & \textbf{19,75} (límite 20) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]\centering
+\begin{minipage}{0.49\linewidth}\centering\includegraphics[width=\linewidth]{fig/render_p5.jpg}\\{\small (a) Render 3D de la tarjeta industrial.}\end{minipage}\hfill
+\begin{minipage}{0.47\linewidth}\centering\includegraphics[width=\linewidth]{fig/jlc_cotizacion.jpg}\\{\small (b) Cotización en la plataforma de JLCPCB.}\end{minipage}
+\caption{Evidencia del P5.}
+\end{figure}
+
+\thal{} \textbf{Distancia entre filas de la PSoC.} El fabricante no la publica. Se midió por fotogrametría sobre una foto cenital del kit: 51 agujeros detectados, una recta ajustada a cada fila y la distancia perpendicular dividida por el paso medido. Resultado: $8{,}0\pm0{,}1$ pasos de \SI{2.54}{mm}, es decir \SI{20.32}{mm}.
+
+% =====================================================================
+\section{Fase 6 · P6: póster y comunicación del proyecto}\label{sec:f6}
+% =====================================================================
+El póster pasó por varias revisiones con el docente. Cada una se tradujo en cambios concretos:
+\begin{table}[H]\centering\small
+\caption{Revisiones del póster y respuesta del equipo.}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+Fecha & Observación del docente & Respuesta \\
+\midrule
+17 nov & Falta el P5; imágenes sin descripción; textos y títulos de tamaños distintos; faltan referencias & Se agregó el P5, una leyenda a cada imagen y un tamaño único de títulos y texto. \\
+24 nov & No hay orden cronológico ni contexto; fotos sin aporte; falta la metodología ágil & Estructura cronológica: problema, método, decisiones, arquitectura, evolución y resultados. \\
+25 nov & Tercera persona; escribir «producto mínimo viable»; presupuesto del P5; más evidencia técnica; citas en el texto & Versión final a cargo de Keren Ramírez con estas correcciones. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% =====================================================================
+\section{Comparación teórico, simulado y experimental}\label{sec:comp}
+% =====================================================================
+\begin{table}[H]\centering\small
+\caption{Resumen de valores teóricos, simulados y medidos a lo largo del curso.}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X ccc>{\raggedright\arraybackslash}p{3.6cm}}
+\toprule
+Magnitud & Teórico & Simulado & Medido & Observación \\
+\midrule
+Ganancia del amplificador (fase 0) & 10,97 & $\approx$10,97 & --- & Verificada en simulación \\
+Frecuencia máx. con \SI{400}{mVp} (fase 0) & \SI{250}{kHz} & --- & \SI{50}{kHz} & Limitada por slew rate \\
+$f_{out}$ WaveDAC8 a \SI{1}{MHz}, $N=1000$ & \SI{1000}{Hz} & --- & \SI{992}{Hz} & Error 0,8~\% \\
+Rango de cada umbral (P4) & 0,99--\SI{4.01}{V} & --- & --- & Por diseño del divisor \\
+Vbuf, suelo seco (P4) & --- & --- & \SI{2.68}{V} & LED rojo \\
+Vbuf, suelo húmedo (P4) & --- & --- & \SI{2.09}{V} & LED verde \\
+Sensor medido sin seguidor & \SI{2.68}{V} & --- & \SI{2.50}{V} & Efecto de carga \\
+Pin con \SI{12}{V} en el cable, 1N4007 & --- & \SI{5.64}{V} & --- & Fuera del margen \\
+Pin con \SI{12}{V} en el cable, Schottky & --- & \SI{5.19}{V} & --- & Elegido para el P5 \\
+Separación mínima PCB del PMV & $\ge$\SI{0.6}{mm} & --- & \SI{0.84}{mm} & \cumple \\
+Costo P5 (2 tarjetas) & $\le$ USD 20 & --- & USD 19,75 & Cotización real \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% =====================================================================
+\section{Registro de decisiones}\label{sec:decisiones}
+% =====================================================================
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{4.0cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{3.9cm}}
+\caption{Decisiones principales, alternativas descartadas y justificación técnica.}\\
+\toprule
+Decisión & Alternativa descartada & Elegida & Justificación \\
+\midrule\endfirsthead
+\toprule Decisión & Alternativa descartada & Elegida & Justificación \\ \midrule\endhead
+Etapas del amplificador & 1, 2 o 3 etapas & 4 no inversoras & BW teórico más cercano a \SI{250}{kHz} \\
+Alimentación del amplificador & Fuente simple 0--\SI{30}{V} & Dual $\pm$\SI{15}{V} & Señales sin offset \\
+Problema del proyecto & Medidor numérico de humedad & Semáforo de 3 estados & Entrevista E01 \\
+Sensor & Resistivo FC-28 & Capacitivo v1.2 & Sin corrosión \\
+Procesamiento & ADC + software (v0) & Bloques internos & Requisito analógico \\
+Umbrales & VDAC8 en firmware (v1) & Trimmers (v2) & Rangos cambian por práctica \\
+Acondicionamiento & Medir el sensor directo & Seguidor interno & $R_{out}\approx\SI{0.72}{M\ohm}$ \\
+Protección & 1N4007 & Schottky B5819W & \SI{5.19}{V} frente a \SI{5.64}{V} \\
+Fabricación del PMV & Transferencia y ácido & Fresado CNC & Repetible, sin químicos \\
+Fabricación final & Mejorar la PCB casera & PCBA en JLCPCB & Producción en serie \\
+Acabado & OSP & HASL & Compatibilidad con ensamble económico \\
+Conexión PSoC & Socket completo 2$\times$26 & Socket parcial 12 pines & USD 20,32 $\rightarrow$ 19,75 \\
+\bottomrule
+\end{longtable}
+
+% =====================================================================
+\section{Trabajo en equipo y gestión de responsabilidades}\label{sec:equipo}
+% =====================================================================
+\subsection{Distribución de tareas}
+\begin{table}[H]\centering\small
+\caption{Responsabilidades principales de cada integrante, según los portafolios individuales y los registros del grupo.}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.0cm}X}
+\toprule
+Integrante & Aporte principal \\
+\midrule
+Juan Esteban Velásquez Perdomo & Identificación del problema y formulación de requisitos; conversión de las fallas del PMV en requisitos del rediseño; compra del sensor y coordinación de reuniones; custodia de la PSoC. \\
+Keren Jireth Ramírez Rivera & Documento del P2 con los requisitos (Overleaf); análisis de los umbrales y de las evidencias; versión final del póster. \\
+Juan Diego Morales Parra & Firmware en PSoC Creator (seguidor, comparadores, NOR, UART; v1 y v2); apoyo en la PCB fresada y en la soldadura; verificación ERC/DRC y asignación de pines del socket. \\
+Juan Diego Valderrama Rodríguez & Mediciones y hoja de calibración; diagnóstico de la red flotante; revisión de la BOM, disponibilidad y costos en JLCPCB; registro de las observaciones del docente. \\
+Sebastián Serrato Ramírez & Diseño de la PCB del PMV y del G-code; simulaciones (semáforo y protección); diseño de la tarjeta industrial en KiCad, cotización y socket parcial; expedientes del P4 y P5; documento del Gate 1; repositorio, bitácora web y guía de estudio. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Coordinación y acuerdos}
+\begin{itemize}
+\item \textbf{Canal de trabajo:} un grupo de WhatsApp para coordinar reuniones, compartir documentos (Overleaf, PDF, archivos de la PCB) y registrar las observaciones del docente después de cada revisión.
+\item \textbf{Materiales y gastos:} se acordó un aporte por integrante para los materiales comunes. El sensor capacitivo lo compró Juan Esteban Velásquez; la lista de componentes del PMV (trimmers, resistencias de \SI{3.3}{k\ohm}, diodos, condensadores, pines y cables dupont) se repartió entre quienes ya tenían piezas y quienes compraban en el centro.
+\item \textbf{Una sola PSoC prestada:} el equipo acordó quién la custodiaba en cada momento y dónde reunirse para usarla, porque todas las pruebas dependían de ella.
+\item \textbf{Validar antes de fabricar:} se acordó mostrar al docente la protoboard funcionando (Gate 1) antes de fresar la PCB, y no soldar nunca la PSoC.
+\item \textbf{Decisiones grandes en conjunto:} descartar el ADC, pasar a trimmers, aceptar el socket y rediseñarlo por costo se discutieron entre todos.
+\end{itemize}
+
+\subsection{Dificultades de colaboración}
+\begin{itemize}
+\item \textbf{Horarios:} las reuniones dependían de los horarios de clase y de trabajo; una sustentación tuvo que acomodarse a la entrevista de trabajo de un integrante.
+\item \textbf{Materiales:} hubo que repetir compras (por ejemplo, una protoboard que se perdió) y conseguir piezas sustitutas (1N4007 en lugar de Schottky en el PMV).
+\item \textbf{Integración de documentos:} cada integrante trabajó partes del informe y del póster por separado; unir versiones generó inconsistencias, como el diagrama del póster con la arquitectura v1 cuando el producto final usaba trimmers.
+\item \textbf{Póster:} varias versiones fueron rechazadas por falta de orden y de contexto antes de llegar a la versión final.
+\end{itemize}
+
+\subsection{Reflexión sobre el desempeño colectivo}
+El equipo funcionó mejor cuando la decisión se tomó comparando alternativas con datos: el cambio a trimmers, el seguidor y el socket parcial tienen evidencia detrás. Funcionó peor en la verificación: la calibración en el nodo equivocado, la tabla del P1 con valores calculados y las inconsistencias del póster son fallas que una segunda revisión entre integrantes habría detectado. La división por frentes permitió avanzar en paralelo, pero dejó a cada integrante con una visión parcial del proyecto; por eso al final se preparó una guía de estudio común para que todos pudieran sustentar el proyecto completo.
+
+% =====================================================================
+\section{Análisis crítico, limitaciones y mejoras}\label{sec:critico}
+% =====================================================================
+\begin{itemize}
+\item \textbf{Resultados.} El sistema cumple los requisitos funcionales: clasifica en tres estados sin procesamiento digital y sus umbrales se ajustan sin reprogramar. La versión industrial cumple el presupuesto y las reglas del fabricante.
+\item \textbf{Limitaciones.} La tarjeta industrial está diseñada y cotizada, pero no fabricada ni probada. Las pruebas del PMV provienen de una sola serie de muestras; falta repetirlas y registrar la dispersión. El estado semihúmedo solo se observó en transición, sin un valor medido estable. La distancia entre filas de la PSoC proviene de fotogrametría y falta medirla con calibrador. No se confirmó la orientación de los LED y trimmers en la plataforma del fabricante (la revisión de ubicación cuesta USD~0,45 y llevaría el pedido a USD~20,20).
+\item \textbf{Errores que dejaron lección.} El modelo de pequeña señal no basta (slew rate en la fase 0); el instrumento también carga el circuito (P1 y P4); hay que anotar el nodo exacto de cada medición; el costo es una restricción de diseño (P5).
+\item \textbf{Mejoras futuras.} Fabricar las dos tarjetas y validarlas con más muestras de suelo; agregar histéresis medida a los comparadores para estabilizar el estado semihúmedo cerca de los umbrales; medir con calibrador antes de comprar; incluir un procedimiento de calibración impreso en la tarjeta.
+\end{itemize}
+
+% =====================================================================
+\section{Conclusiones}
+% =====================================================================
+\begin{enumerate}
+\item El ciclo construir--medir--aprender guió el proyecto: cada producto (amplificador, WaveDAC8, entrevista, semáforo v1, PMV, tarjeta industrial) se construyó para responder una pregunta, y su medición definió el siguiente cambio.
+\item La entrevista E01 cambió el problema y el diseño: de medir humedad a clasificarla al instante, con umbrales ajustables por trimmers.
+\item Las mediciones justificaron las decisiones técnicas: la caída de \SI{2.68}{V} a \SI{2.50}{V} por carga justificó el seguidor, y la simulación de \SI{5.64}{V} frente a \SI{5.19}{V} justificó los diodos Schottky.
+\item El PMV clasificó correctamente el suelo seco (\SI{2.68}{V}, rojo) y el húmedo (\SI{2.09}{V}, verde) con procesamiento 100~\% analógico.
+\item La versión industrial pasó ERC y DRC sin errores y se cotizó en USD~19,75 para dos tarjetas ensambladas, dentro del límite de USD~20, gracias al rediseño del socket.
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{ries} E. Ries, \emph{The Lean Startup}. New York, NY, USA: Crown Business, 2011.
+\bibitem{lm358} Texas Instruments, «LMx58-N Low-Power, Dual-Operational Amplifiers», datasheet SNOSBT3.
+\bibitem{psoc} Infineon Technologies, «PSoC 5LP: CY8C58LP family datasheet», doc. 001-84932.
+\bibitem{e01} Equipo del proyecto, «Entrevista E01: clasificación de muestras de suelo», Univ. Surcolombiana, Neiva, 19 oct. 2026.
+\bibitem{dfrobot} DFRobot, «Capacitive soil moisture sensor SKU:SEN0193». [En línea]. Disponible: wiki.dfrobot.com
+\bibitem{jlc} JLCPCB, «PCB assembly capabilities». [En línea]. Disponible: jlcpcb.com/capabilities
+\bibitem{repo} Equipo del proyecto, «Semáforo de humedad para PSoC 5LP: código, planos y expedientes». [En línea]. Disponible: github.com/Serrato5/semaforo-humedad-psoc5lp
+\end{thebibliography}
+\end{document}
